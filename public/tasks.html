@@ -1,0 +1,1390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="UTF-8">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Tasks | PlasticLess</title>
+
+    <link
+        rel="stylesheet"
+        href="css/style.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="css/navbar.css"
+    >
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f5faf7;
+            color: #173b27;
+        }
+
+        /* ================= HERO ================= */
+
+        .tasks-hero {
+            min-height: 380px;
+            padding: 80px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+
+            /* BRIGHT BACKGROUND IMAGE */
+            background:
+                linear-gradient(
+                    rgba(10, 70, 35, 0.10),
+                    rgba(10, 70, 35, 0.10)
+                ),
+                url("/images/tasks-hero.png");
+
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        .tasks-hero-content {
+            max-width: 850px;
+            color: white;
+        }
+
+        .tasks-hero h1 {
+            margin: 0 0 18px;
+            font-size: 52px;
+        }
+
+        .tasks-hero p {
+            margin: auto;
+            max-width: 700px;
+            font-size: 18px;
+            line-height: 1.7;
+        }
+
+        /* ================= SECTION ================= */
+
+        .tasks-section {
+            max-width: 1350px;
+            margin: auto;
+            padding: 70px 5%;
+        }
+
+        .section-heading {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .small-title {
+            color: #16a34a;
+            font-size: 13px;
+            font-weight: 800;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .section-heading h2 {
+            margin: 10px 0;
+            font-size: 38px;
+            color: #14532d;
+        }
+
+        .section-heading p {
+            max-width: 700px;
+            margin: auto;
+            color: #607468;
+            line-height: 1.7;
+        }
+
+        /* ================= LOGIN WARNING ================= */
+
+        .login-warning {
+            display: none;
+            max-width: 700px;
+            margin: 0 auto 30px;
+            padding: 18px;
+            text-align: center;
+            border-radius: 14px;
+            background: #fff7ed;
+            border: 1px solid #fed7aa;
+            color: #9a3412;
+        }
+
+        .login-warning a {
+            color: #15803d;
+            font-weight: 800;
+            text-decoration: none;
+        }
+
+        /* ================= PROGRESS ================= */
+
+        .progress-card {
+            max-width: 900px;
+            margin: 0 auto 45px;
+            background: white;
+            padding: 28px;
+            border-radius: 18px;
+            border: 1px solid #deebe2;
+            box-shadow:
+                0 10px 30px
+                rgba(20, 83, 45, 0.08);
+        }
+
+        .progress-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 14px;
+        }
+
+        .progress-header h3 {
+            margin: 0;
+            color: #14532d;
+        }
+
+        .progress-count {
+            color: #16a34a;
+            font-size: 22px;
+            font-weight: 800;
+        }
+
+        .main-progress {
+            width: 100%;
+            height: 12px;
+            background: #e6efe9;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+
+        .main-progress-fill {
+            height: 100%;
+            width: 0%;
+            background: #16a34a;
+            border-radius: 20px;
+            transition: width 0.5s ease;
+        }
+
+        .points-row {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 14px;
+            color: #597162;
+        }
+
+        .points-value {
+            color: #14532d;
+            font-weight: 800;
+        }
+
+        /* ================= TASK GRID ================= */
+
+        .task-grid {
+            display: grid;
+            grid-template-columns:
+                repeat(3, minmax(0, 1fr));
+
+            gap: 25px;
+        }
+
+        .task-card {
+            position: relative;
+            background: white;
+            border-radius: 20px;
+            padding: 28px;
+            border: 1px solid #e0eee5;
+
+            box-shadow:
+                0 10px 30px
+                rgba(20, 83, 45, 0.07);
+
+            transition: 0.25s ease;
+        }
+
+        .task-card:hover {
+            transform: translateY(-6px);
+
+            box-shadow:
+                0 18px 38px
+                rgba(20, 83, 45, 0.13);
+        }
+
+        .task-card.completed {
+            background: #f0fdf4;
+            border-color: #86efac;
+        }
+
+        .task-number {
+            position: absolute;
+            top: 18px;
+            right: 20px;
+
+            color: #9aada0;
+            font-size: 12px;
+            font-weight: 800;
+        }
+
+        .task-icon {
+            width: 65px;
+            height: 65px;
+
+            border-radius: 16px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            background: #dcfce7;
+
+            font-size: 32px;
+
+            margin-bottom: 20px;
+        }
+
+        .task-card h3 {
+            margin: 0 0 10px;
+            color: #14532d;
+            font-size: 21px;
+        }
+
+        .task-card p {
+            min-height: 75px;
+            margin: 0 0 18px;
+
+            color: #66766c;
+            line-height: 1.65;
+            font-size: 14px;
+        }
+
+        .task-points {
+            display: inline-block;
+
+            margin-bottom: 18px;
+            padding: 6px 10px;
+
+            border-radius: 20px;
+
+            background: #f0fdf4;
+            color: #15803d;
+
+            font-size: 12px;
+            font-weight: 800;
+        }
+
+        .task-btn {
+            width: 100%;
+            padding: 13px 18px;
+
+            border: none;
+            border-radius: 10px;
+
+            background: #16a34a;
+            color: white;
+
+            font-size: 14px;
+            font-weight: 800;
+
+            cursor: pointer;
+        }
+
+        .task-btn:hover:not(:disabled) {
+            background: #15803d;
+        }
+
+        .task-btn:disabled {
+            cursor: not-allowed;
+            opacity: 0.9;
+        }
+
+        .task-btn.completed-btn {
+            background: #166534;
+        }
+
+        .task-btn.loading-btn {
+            background: #789583;
+        }
+
+        /* ================= SUCCESS ================= */
+
+        .success-box {
+            display: none;
+
+            max-width: 850px;
+            margin: 45px auto 0;
+
+            padding: 35px;
+
+            text-align: center;
+
+            border-radius: 20px;
+
+            background: #dcfce7;
+            border: 1px solid #86efac;
+        }
+
+        .success-box.show {
+            display: block;
+        }
+
+        .success-box-icon {
+            font-size: 55px;
+        }
+
+        .success-box h2 {
+            margin: 10px 0;
+            color: #166534;
+        }
+
+        .success-box p {
+            color: #52705e;
+            line-height: 1.7;
+        }
+
+        /* ================= ERROR ================= */
+
+        .error-box {
+            display: none;
+
+            max-width: 700px;
+            margin: 20px auto 30px;
+
+            padding: 18px;
+
+            text-align: center;
+
+            background: #fee2e2;
+            border: 1px solid #fecaca;
+
+            color: #991b1b;
+
+            border-radius: 12px;
+        }
+
+        .retry-btn {
+            margin-top: 10px;
+
+            border: none;
+            border-radius: 9px;
+
+            padding: 10px 18px;
+
+            background: #16a34a;
+            color: white;
+
+            font-weight: 700;
+
+            cursor: pointer;
+        }
+
+        /* ================= FOOTER ================= */
+
+        footer {
+            background: #0f2f1c;
+            color: white;
+            text-align: center;
+            padding: 35px 20px;
+        }
+
+        footer h2 {
+            margin-top: 0;
+        }
+
+        footer p {
+            color: #b8cfc0;
+        }
+
+        /* ================= MOBILE ================= */
+
+        @media (max-width: 1000px) {
+
+            .task-grid {
+                grid-template-columns:
+                    repeat(2, minmax(0, 1fr));
+            }
+
+        }
+
+        @media (max-width: 650px) {
+
+            .tasks-hero h1 {
+                font-size: 37px;
+            }
+
+            .tasks-section {
+                padding: 50px 20px;
+            }
+
+            .section-heading h2 {
+                font-size: 30px;
+            }
+
+            .task-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .progress-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+
+            .points-row {
+                flex-direction: column;
+                gap: 5px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- ================= NAVBAR ================= -->
+
+<div class="navbar"></div>
+
+
+<!-- ================= HERO ================= -->
+
+<section class="tasks-hero">
+
+    <div class="tasks-hero-content">
+
+        <h1>
+            Plastic-Free Tasks
+        </h1>
+
+        <p>
+            Complete simple actions, earn points,
+            and become part of the PlasticLess movement.
+        </p>
+
+    </div>
+
+</section>
+
+
+<!-- ================= MAIN ================= -->
+
+<main>
+
+<section class="tasks-section">
+
+
+    <div class="section-heading">
+
+        <div class="small-title">
+            TAKE ACTION
+        </div>
+
+        <h2>
+            Your Plastic-Free Journey
+        </h2>
+
+        <p>
+            Complete all six tasks and earn
+            up to 160 points.
+        </p>
+
+    </div>
+
+
+    <!-- LOGIN WARNING -->
+
+    <div
+        id="loginWarning"
+        class="login-warning"
+    >
+
+        🔐 Please
+        <a href="login.html">login</a>
+        to complete tasks and save your progress.
+
+    </div>
+
+
+    <!-- PROGRESS -->
+
+    <div class="progress-card">
+
+        <div class="progress-header">
+
+            <h3>
+                Your Progress
+            </h3>
+
+            <div
+                id="progressCount"
+                class="progress-count"
+            >
+                0 / 6
+            </div>
+
+        </div>
+
+
+        <div class="main-progress">
+
+            <div
+                id="progressFill"
+                class="main-progress-fill"
+            ></div>
+
+        </div>
+
+
+        <div class="points-row">
+
+            <span>
+                Points Earned
+            </span>
+
+            <span
+                id="pointsValue"
+                class="points-value"
+            >
+                0 points
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <!-- ERROR -->
+
+    <div
+        id="errorBox"
+        class="error-box"
+    ></div>
+
+
+    <!-- TASKS -->
+
+    <div
+        id="taskGrid"
+        class="task-grid"
+    ></div>
+
+
+    <!-- SUCCESS -->
+
+    <div
+        id="successBox"
+        class="success-box"
+    >
+
+        <div class="success-box-icon">
+            🎉
+        </div>
+
+        <h2>
+            Amazing Work!
+        </h2>
+
+        <p>
+            You completed all 6 PlasticLess tasks.
+            Thank you for helping create a cleaner
+            and greener future!
+        </p>
+
+    </div>
+
+
+</section>
+
+</main>
+
+
+<!-- ================= FOOTER ================= -->
+
+<footer>
+
+    <h2>
+        PlasticLess 🌍
+    </h2>
+
+    <p>
+        Together for a cleaner and greener future.
+    </p>
+
+    <p>
+        © 2026 PlasticLess. All Rights Reserved.
+    </p>
+
+</footer>
+
+
+<!-- ================= NAVBAR JS ================= -->
+
+<script src="js/navbar.js"></script>
+
+
+<script>
+
+let loggedIn = false;
+
+
+/* =====================================================
+   CHECK LOGIN
+
+   IMPORTANT:
+   Use /api/current-user
+   NOT /api/me
+===================================================== */
+
+async function checkLogin() {
+
+    try {
+
+        const response = await fetch(
+            "/api/current-user",
+            {
+                method: "GET",
+                credentials: "include",
+                cache: "no-store"
+            }
+        );
+
+
+        const data =
+            await response.json();
+
+
+        loggedIn =
+            response.ok &&
+            data.success === true &&
+            data.loggedIn === true &&
+            data.user;
+
+
+        document.getElementById(
+            "loginWarning"
+        ).style.display =
+            loggedIn
+                ? "none"
+                : "block";
+
+
+        return loggedIn;
+
+    } catch (error) {
+
+        console.error(
+            "Login check error:",
+            error
+        );
+
+
+        loggedIn = false;
+
+
+        document.getElementById(
+            "loginWarning"
+        ).style.display =
+            "block";
+
+
+        return false;
+    }
+}
+
+
+/* =====================================================
+   LOAD TASKS
+===================================================== */
+
+async function loadTasks() {
+
+    const grid =
+        document.getElementById(
+            "taskGrid"
+        );
+
+
+    const errorBox =
+        document.getElementById(
+            "errorBox"
+        );
+
+
+    errorBox.style.display =
+        "none";
+
+
+    grid.innerHTML = `
+        <div style="
+            grid-column:1/-1;
+            text-align:center;
+            padding:50px;
+            color:#607468;
+        ">
+            🌱 Loading tasks...
+        </div>
+    `;
+
+
+    try {
+
+        /* CHECK SESSION */
+
+        await checkLogin();
+
+
+        /* LOAD TASKS */
+
+        const response =
+            await fetch(
+                "/api/tasks",
+                {
+                    method: "GET",
+                    credentials: "include",
+                    cache: "no-store"
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                data.message ||
+                "Unable to load tasks."
+            );
+
+        }
+
+
+        const tasks =
+            Array.isArray(data.tasks)
+                ? data.tasks
+                : [];
+
+
+        grid.innerHTML = "";
+
+
+        if (tasks.length === 0) {
+
+            grid.innerHTML = `
+                <div style="
+                    grid-column:1/-1;
+                    text-align:center;
+                    padding:50px;
+                    background:white;
+                    border-radius:18px;
+                ">
+
+                    <h3>
+                        No tasks found
+                    </h3>
+
+                    <p>
+                        Please check the tasks
+                        table in phpMyAdmin.
+                    </p>
+
+                </div>
+            `;
+
+
+            updateProgress(
+                0,
+                6,
+                0
+            );
+
+
+            return;
+        }
+
+
+        /* CREATE TASK CARDS */
+
+        tasks.forEach(
+            (task, index) => {
+
+                const card =
+                    createTaskCard(
+                        task,
+                        index
+                    );
+
+                grid.appendChild(
+                    card
+                );
+
+            }
+        );
+
+
+        /* CALCULATE PROGRESS */
+
+        let completedCount = 0;
+        let points = 0;
+
+
+        tasks.forEach(
+            task => {
+
+                const completed =
+                    Number(
+                        task.completed
+                    ) === 1 ||
+                    task.completed === true;
+
+
+                if (completed) {
+
+                    completedCount++;
+
+                    points +=
+                        Number(
+                            task.points || 0
+                        );
+
+                }
+
+            }
+        );
+
+
+        updateProgress(
+            completedCount,
+            tasks.length,
+            points
+        );
+
+
+        if (
+            completedCount >= tasks.length
+        ) {
+
+            showSuccess();
+
+        }
+
+    } catch (error) {
+
+        console.error(
+            "Tasks error:",
+            error
+        );
+
+
+        grid.innerHTML = "";
+
+
+        errorBox.innerHTML = `
+            ⚠️ ${escapeHTML(
+                error.message ||
+                "Unable to load tasks."
+            )}
+
+            <br>
+
+            <button
+                class="retry-btn"
+                onclick="loadTasks()"
+            >
+                Try Again
+            </button>
+        `;
+
+
+        errorBox.style.display =
+            "block";
+    }
+}
+
+
+/* =====================================================
+   CREATE TASK CARD
+===================================================== */
+
+function createTaskCard(
+    task,
+    index
+) {
+
+    const card =
+        document.createElement(
+            "div"
+        );
+
+
+    const completed =
+        Number(
+            task.completed
+        ) === 1 ||
+        task.completed === true;
+
+
+    card.className =
+        completed
+            ? "task-card completed"
+            : "task-card";
+
+
+    const icon =
+        task.icon || "🌱";
+
+
+    const title =
+        task.title ||
+        "PlasticLess Task";
+
+
+    const description =
+        task.description ||
+        "Complete this task.";
+
+
+    const points =
+        Number(
+            task.points || 0
+        );
+
+
+    let buttonHTML;
+
+
+    if (completed) {
+
+        buttonHTML = `
+            <button
+                class="task-btn completed-btn"
+                disabled
+            >
+                ✓ COMPLETED
+            </button>
+        `;
+
+    } else {
+
+        buttonHTML = `
+            <button
+                class="task-btn"
+                onclick="
+                    completeTask(
+                        ${Number(task.id)},
+                        this
+                    )
+                "
+            >
+                Mark as Completed
+            </button>
+        `;
+
+    }
+
+
+    card.innerHTML = `
+
+        <div class="task-number">
+            ${String(
+                index + 1
+            ).padStart(2, "0")}
+        </div>
+
+        <div class="task-icon">
+            ${escapeHTML(icon)}
+        </div>
+
+        <h3>
+            ${escapeHTML(title)}
+        </h3>
+
+        <p>
+            ${escapeHTML(description)}
+        </p>
+
+        <div class="task-points">
+            ⭐ ${points} points
+        </div>
+
+        ${buttonHTML}
+
+    `;
+
+
+    return card;
+}
+
+
+/* =====================================================
+   COMPLETE TASK
+===================================================== */
+
+async function completeTask(
+    taskId,
+    button
+) {
+
+    /*
+       FIRST check current session
+    */
+
+    const isLogged =
+        await checkLogin();
+
+
+    if (!isLogged) {
+
+        alert(
+            "Your login session has expired. Please login again."
+        );
+
+
+        window.location.href =
+            "login.html";
+
+
+        return;
+    }
+
+
+    button.disabled = true;
+
+    button.classList.add(
+        "loading-btn"
+    );
+
+    button.textContent =
+        "Saving...";
+
+
+    try {
+
+        const response =
+            await fetch(
+                `/api/tasks/${taskId}/complete`,
+                {
+                    method: "POST",
+
+                    credentials: "include",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    }
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (
+            response.status === 401
+        ) {
+
+            alert(
+                "Your login session expired. Please login again."
+            );
+
+
+            window.location.href =
+                "login.html";
+
+
+            return;
+        }
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                data.message ||
+                "Unable to complete task."
+            );
+
+        }
+
+
+        /* BUTTON */
+
+        button.classList.remove(
+            "loading-btn"
+        );
+
+        button.classList.add(
+            "completed-btn"
+        );
+
+        button.textContent =
+            "✓ COMPLETED";
+
+        button.disabled = true;
+
+
+        /* CARD */
+
+        const card =
+            button.closest(
+                ".task-card"
+            );
+
+
+        if (card) {
+
+            card.classList.add(
+                "completed"
+            );
+
+        }
+
+
+        /*
+           Reload progress from database
+        */
+
+        await refreshProgress();
+
+    } catch (error) {
+
+        console.error(
+            "Complete task error:",
+            error
+        );
+
+
+        button.disabled = false;
+
+        button.classList.remove(
+            "loading-btn"
+        );
+
+        button.textContent =
+            "Mark as Completed";
+
+
+        alert(
+            error.message ||
+            "Unable to complete task."
+        );
+
+    }
+}
+
+
+/* =====================================================
+   REFRESH PROGRESS
+===================================================== */
+
+async function refreshProgress() {
+
+    try {
+
+        const response =
+            await fetch(
+                "/api/tasks/progress",
+                {
+                    method: "GET",
+                    credentials: "include",
+                    cache: "no-store"
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (
+            response.status === 401
+        ) {
+
+            loggedIn = false;
+
+            document.getElementById(
+                "loginWarning"
+            ).style.display =
+                "block";
+
+            return;
+
+        }
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                data.message ||
+                "Progress error."
+            );
+
+        }
+
+
+        const completed =
+            Number(
+                data.completed_tasks ??
+                data.completed ??
+                0
+            );
+
+
+        const total =
+            Number(
+                data.total_tasks ??
+                data.total ??
+                6
+            );
+
+
+        const points =
+            Number(
+                data.total_points ??
+                data.points ??
+                0
+            );
+
+
+        updateProgress(
+            completed,
+            total,
+            points
+        );
+
+
+        if (
+            completed >= total &&
+            total > 0
+        ) {
+
+            showSuccess();
+
+        }
+
+    } catch (error) {
+
+        console.error(
+            "Refresh progress error:",
+            error
+        );
+
+    }
+}
+
+
+/* =====================================================
+   UPDATE PROGRESS
+===================================================== */
+
+function updateProgress(
+    completed,
+    total,
+    points
+) {
+
+    completed =
+        Number(completed || 0);
+
+    total =
+        Number(total || 6);
+
+    points =
+        Number(points || 0);
+
+
+    document.getElementById(
+        "progressCount"
+    ).textContent =
+        `${completed} / ${total}`;
+
+
+    const percentage =
+        total > 0
+            ? Math.min(
+                100,
+                (completed / total) * 100
+            )
+            : 0;
+
+
+    document.getElementById(
+        "progressFill"
+    ).style.width =
+        `${percentage}%`;
+
+
+    document.getElementById(
+        "pointsValue"
+    ).textContent =
+        `${points} points`;
+}
+
+
+/* =====================================================
+   SUCCESS
+===================================================== */
+
+function showSuccess() {
+
+    document.getElementById(
+        "successBox"
+    ).classList.add(
+        "show"
+    );
+}
+
+
+/* =====================================================
+   ESCAPE HTML
+===================================================== */
+
+function escapeHTML(value) {
+
+    return String(value)
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+        .replace(
+            /</g,
+            "&lt;"
+        )
+        .replace(
+            />/g,
+            "&gt;"
+        )
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+        .replace(
+            /'/g,
+            "&#039;"
+        );
+}
+
+
+/* =====================================================
+   START
+===================================================== */
+
+loadTasks();
+
+</script>
+
+</body>
+</html>

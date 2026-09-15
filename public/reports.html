@@ -1,0 +1,1401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Reports | PlasticLess</title>
+
+    <link rel="stylesheet" href="css/navbar.css">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: linear-gradient(135deg, #f0fff4, #e8f8ed);
+            color: #17351f;
+            min-height: 100vh;
+        }
+
+        .page-header {
+            padding: 120px 20px 45px;
+            text-align: center;
+            background:
+                linear-gradient(rgba(18, 75, 38, 0.82), rgba(18, 75, 38, 0.82)),
+                url("images/report-bg.jpg");
+            background-size: cover;
+            background-position: center;
+            color: white;
+        }
+
+        .page-header h1 {
+            font-size: 42px;
+            margin-bottom: 10px;
+        }
+
+        .page-header p {
+            font-size: 17px;
+            opacity: 0.92;
+        }
+
+        .container {
+            width: 92%;
+            max-width: 1200px;
+            margin: 35px auto 60px;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .section-title h2 {
+            font-size: 30px;
+            color: #176b38;
+            margin-bottom: 8px;
+        }
+
+        .section-title p {
+            color: #607568;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 22px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 18px;
+            padding: 28px 22px;
+            text-align: center;
+            box-shadow: 0 8px 25px rgba(22, 80, 43, 0.10);
+            border: 1px solid #dcefe2;
+            transition: 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 14px 32px rgba(22, 80, 43, 0.16);
+        }
+
+        .stat-icon {
+            font-size: 38px;
+            margin-bottom: 12px;
+        }
+
+        .stat-card h3 {
+            font-size: 15px;
+            color: #66796d;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-value {
+            font-size: 34px;
+            font-weight: bold;
+            color: #17823f;
+        }
+
+        .report-panel {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 25px rgba(22, 80, 43, 0.10);
+            border: 1px solid #dcefe2;
+        }
+
+        .report-panel h2 {
+            color: #176b38;
+            margin-bottom: 20px;
+            font-size: 25px;
+        }
+
+        .month-controls {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 25px;
+        }
+
+        .month-controls select,
+        .month-controls button {
+            padding: 12px 16px;
+            border-radius: 10px;
+            border: 1px solid #cfe3d5;
+            font-size: 15px;
+        }
+
+        .month-controls select {
+            background: white;
+            color: #17351f;
+            min-width: 220px;
+        }
+
+        .month-controls button {
+            background: #188441;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .month-controls button:hover {
+            background: #116b33;
+        }
+
+        .report-message {
+            padding: 15px;
+            border-radius: 10px;
+            background: #f1faf3;
+            color: #42634c;
+            margin-bottom: 20px;
+        }
+
+        .data-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .data-box {
+            background: #f7fcf8;
+            border: 1px solid #dcefe2;
+            border-radius: 14px;
+            padding: 22px;
+        }
+
+        .data-box h3 {
+            color: #267444;
+            margin-bottom: 10px;
+        }
+
+        .data-number {
+            font-size: 27px;
+            font-weight: bold;
+            color: #16803e;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        th,
+        td {
+            padding: 13px 12px;
+            border-bottom: 1px solid #e2eee5;
+            text-align: left;
+        }
+
+        th {
+            background: #edf8f0;
+            color: #176b38;
+        }
+
+        td {
+            color: #4e6255;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 25px;
+            color: #5e7164;
+        }
+
+        .error {
+            background: #fff1f1;
+            color: #a23b3b;
+            padding: 15px;
+            border-radius: 10px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 25px;
+            background: #103d22;
+            color: #dcefe2;
+        }
+
+        @media (max-width: 900px) {
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .data-grid {
+                grid-template-columns: 1fr;
+            }
+
+        }
+
+        @media (max-width: 600px) {
+
+            .page-header {
+                padding-top: 100px;
+            }
+
+            .page-header h1 {
+                font-size: 32px;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .report-panel {
+                padding: 20px;
+            }
+
+            .month-controls {
+                flex-direction: column;
+            }
+
+            .month-controls select,
+            .month-controls button {
+                width: 100%;
+            }
+
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- COMMON NAVBAR -->
+    <div class="navbar"></div>
+
+
+    <!-- HEADER -->
+
+    <header class="page-header">
+
+        <h1>📊 PlasticLess Reports</h1>
+
+        <p>
+            Track our collective impact against plastic pollution
+        </p>
+
+    </header>
+
+
+    <main class="container">
+
+
+        <!-- MAIN STATISTICS -->
+
+        <section>
+
+            <div class="section-title">
+
+                <h2>🌱 Our Impact</h2>
+
+                <p>
+                    Real-time progress from the PlasticLess community
+                </p>
+
+            </div>
+
+
+            <div class="stats-grid">
+
+
+                <div class="stat-card">
+
+                    <div class="stat-icon">
+                        ♻️
+                    </div>
+
+                    <h3>
+                        Plastic Collected
+                    </h3>
+
+                    <div
+                        class="stat-value"
+                        id="plasticCollected"
+                    >
+                        0 kg
+                    </div>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <div class="stat-icon">
+                        👥
+                    </div>
+
+                    <h3>
+                        Volunteers
+                    </h3>
+
+                    <div
+                        class="stat-value"
+                        id="volunteers"
+                    >
+                        0
+                    </div>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <div class="stat-icon">
+                        🌍
+                    </div>
+
+                    <h3>
+                        Campaign Participants
+                    </h3>
+
+                    <div
+                        class="stat-value"
+                        id="campaignParticipants"
+                    >
+                        0
+                    </div>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <div class="stat-icon">
+                        ✅
+                    </div>
+
+                    <h3>
+                        Tasks Completed
+                    </h3>
+
+                    <div
+                        class="stat-value"
+                        id="tasksCompleted"
+                    >
+                        0
+                    </div>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <div class="stat-icon">
+                        ⭐
+                    </div>
+
+                    <h3>
+                        Task Points
+                    </h3>
+
+                    <div
+                        class="stat-value"
+                        id="taskPoints"
+                    >
+                        0
+                    </div>
+
+                </div>
+
+
+            </div>
+
+        </section>
+
+
+
+        <!-- MONTHLY REPORT -->
+
+        <section class="report-panel">
+
+            <h2>
+                📅 Monthly Report
+            </h2>
+
+
+            <div class="month-controls">
+
+                <select id="monthSelect">
+
+                    <option value="">
+                        Select Month
+                    </option>
+
+                </select>
+
+
+                <button
+                    type="button"
+                    onclick="loadSelectedMonth()"
+                >
+                    View Report
+                </button>
+
+            </div>
+
+
+            <div
+                id="reportMessage"
+                class="report-message"
+            >
+                Select a month to view detailed report information.
+            </div>
+
+
+            <div
+                id="monthlyData"
+                style="display:none;"
+            >
+
+                <div class="data-grid">
+
+
+                    <div class="data-box">
+
+                        <h3>
+                            ♻️ Plastic Collected
+                        </h3>
+
+                        <div
+                            class="data-number"
+                            id="monthlyPlastic"
+                        >
+                            0 kg
+                        </div>
+
+                    </div>
+
+
+                    <div class="data-box">
+
+                        <h3>
+                            👥 Volunteers
+                        </h3>
+
+                        <div
+                            class="data-number"
+                            id="monthlyVolunteers"
+                        >
+                            0
+                        </div>
+
+                    </div>
+
+
+                    <div class="data-box">
+
+                        <h3>
+                            🌍 Campaign Participants
+                        </h3>
+
+                        <div
+                            class="data-number"
+                            id="monthlyParticipants"
+                        >
+                            0
+                        </div>
+
+                    </div>
+
+
+                    <div class="data-box">
+
+                        <h3>
+                            ✅ Tasks Completed
+                        </h3>
+
+                        <div
+                            class="data-number"
+                            id="monthlyTasks"
+                        >
+                            0
+                        </div>
+
+                    </div>
+
+
+                    <div class="data-box">
+
+                        <h3>
+                            ⭐ Task Points
+                        </h3>
+
+                        <div
+                            class="data-number"
+                            id="monthlyPoints"
+                        >
+                            0
+                        </div>
+
+                    </div>
+
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- PLASTIC TYPE REPORT -->
+
+        <section class="report-panel">
+
+            <h2>
+                ♻️ Plastic Collection by Type
+            </h2>
+
+
+            <div id="plasticTypeContainer">
+
+                <div class="loading">
+                    Loading collection data...
+                </div>
+
+            </div>
+
+        </section>
+
+
+    </main>
+
+
+
+    <!-- FOOTER -->
+
+    <footer>
+
+        <p>
+            🌿 PlasticLess — Together for a Plastic-Free Future
+        </p>
+
+    </footer>
+
+
+
+    <!-- COMMON NAVBAR JS -->
+
+    <script src="js/navbar.js"></script>
+
+
+    <script>
+
+        /* =====================================================
+           GLOBAL
+        ===================================================== */
+
+        let currentMonthlyReport = null;
+
+
+
+        /* =====================================================
+           PAGE LOAD
+        ===================================================== */
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            async function () {
+
+                await loadSummary();
+
+                setupMonthSelector();
+
+                await loadCurrentMonth();
+
+            }
+        );
+
+
+
+        /* =====================================================
+           LOAD OVERALL SUMMARY
+        ===================================================== */
+
+        async function loadSummary() {
+
+            try {
+
+                const response =
+                    await fetch(
+                        "/api/reports/summary",
+                        {
+                            method: "GET",
+                            credentials: "include",
+                            cache: "no-store"
+                        }
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                if (!response.ok || data.success !== true) {
+
+                    throw new Error(
+                        data.message ||
+                        "Unable to load report summary."
+                    );
+
+                }
+
+
+                /* Plastic */
+
+                document.getElementById(
+                    "plasticCollected"
+                ).textContent =
+                    `${Number(
+                        data.totalPlastic || 0
+                    ).toFixed(2)} kg`;
+
+
+                /* Volunteers */
+
+                document.getElementById(
+                    "volunteers"
+                ).textContent =
+                    Number(
+                        data.volunteers || 0
+                    );
+
+
+                /* Campaign Participants */
+
+                document.getElementById(
+                    "campaignParticipants"
+                ).textContent =
+                    Number(
+                        data.campaignParticipants || 0
+                    );
+
+
+                /* Tasks */
+
+                document.getElementById(
+                    "tasksCompleted"
+                ).textContent =
+                    Number(
+                        data.tasksCompleted || 0
+                    );
+
+
+                /* Points */
+
+                document.getElementById(
+                    "taskPoints"
+                ).textContent =
+                    Number(
+                        data.taskPoints || 0
+                    );
+
+
+            } catch (error) {
+
+                console.error(
+                    "Summary error:",
+                    error
+                );
+
+
+                document.getElementById(
+                    "plasticCollected"
+                ).textContent = "0 kg";
+
+
+                document.getElementById(
+                    "volunteers"
+                ).textContent = "0";
+
+
+                document.getElementById(
+                    "campaignParticipants"
+                ).textContent = "0";
+
+
+                document.getElementById(
+                    "tasksCompleted"
+                ).textContent = "0";
+
+
+                document.getElementById(
+                    "taskPoints"
+                ).textContent = "0";
+
+            }
+
+        }
+
+
+
+        /* =====================================================
+           MONTH SELECTOR
+        ===================================================== */
+
+        function setupMonthSelector() {
+
+            const select =
+                document.getElementById(
+                    "monthSelect"
+                );
+
+
+            select.innerHTML =
+                '<option value="">Select Month</option>';
+
+
+            const now =
+                new Date();
+
+
+            const currentYear =
+                now.getFullYear();
+
+
+            const currentMonth =
+                now.getMonth();
+
+
+            /*
+                Show all months from January
+                until the current month.
+            */
+
+            for (
+                let month = currentMonth;
+                month >= 0;
+                month--
+            ) {
+
+                const date =
+                    new Date(
+                        currentYear,
+                        month,
+                        1
+                    );
+
+
+                const value =
+                    `${currentYear}-${String(
+                        month + 1
+                    ).padStart(2, "0")}`;
+
+
+                const label =
+                    date.toLocaleString(
+                        "en-US",
+                        {
+                            month: "long",
+                            year: "numeric"
+                        }
+                    );
+
+
+                const option =
+                    document.createElement(
+                        "option"
+                    );
+
+
+                option.value =
+                    value;
+
+
+                option.textContent =
+                    label;
+
+
+                select.appendChild(
+                    option
+                );
+
+            }
+
+
+            /*
+                Select current month.
+            */
+
+            const currentValue =
+                `${currentYear}-${String(
+                    currentMonth + 1
+                ).padStart(2, "0")}`;
+
+
+            select.value =
+                currentValue;
+
+        }
+
+
+
+        /* =====================================================
+           LOAD CURRENT MONTH
+        ===================================================== */
+
+        async function loadCurrentMonth() {
+
+            const select =
+                document.getElementById(
+                    "monthSelect"
+                );
+
+
+            if (!select.value) {
+
+                return;
+
+            }
+
+
+            await loadMonthlyReport(
+                select.value
+            );
+
+        }
+
+
+
+        /* =====================================================
+           LOAD SELECTED MONTH
+        ===================================================== */
+
+        async function loadSelectedMonth() {
+
+            const select =
+                document.getElementById(
+                    "monthSelect"
+                );
+
+
+            const month =
+                select.value;
+
+
+            if (!month) {
+
+                document.getElementById(
+                    "reportMessage"
+                ).textContent =
+                    "Please select a month.";
+
+                return;
+
+            }
+
+
+            await loadMonthlyReport(
+                month
+            );
+
+        }
+
+
+
+        /* =====================================================
+           MONTHLY REPORT API
+        ===================================================== */
+
+        async function loadMonthlyReport(
+            month
+        ) {
+
+            const monthlyData =
+                document.getElementById(
+                    "monthlyData"
+                );
+
+
+            const message =
+                document.getElementById(
+                    "reportMessage"
+                );
+
+
+            try {
+
+                message.textContent =
+                    "Loading monthly report...";
+
+
+                monthlyData.style.display =
+                    "none";
+
+
+                const response =
+                    await fetch(
+                        `/api/reports/monthly?month=${encodeURIComponent(month)}`,
+                        {
+                            method: "GET",
+                            credentials: "include",
+                            cache: "no-store"
+                        }
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                if (
+                    !response.ok ||
+                    data.success !== true
+                ) {
+
+                    throw new Error(
+                        data.message ||
+                        "Unable to load monthly report."
+                    );
+
+                }
+
+
+                currentMonthlyReport =
+                    data;
+
+
+                displayMonthlyReport(
+                    data
+                );
+
+
+            } catch (error) {
+
+                console.error(
+                    "Monthly report error:",
+                    error
+                );
+
+
+                monthlyData.style.display =
+                    "none";
+
+
+                message.textContent =
+                    `❌ ${
+                        error.message ||
+                        "Unable to load monthly report."
+                    }`;
+
+            }
+
+        }
+
+
+
+        /* =====================================================
+           DISPLAY MONTHLY REPORT
+        ===================================================== */
+
+        function displayMonthlyReport(
+            report
+        ) {
+
+            document.getElementById(
+                "monthlyData"
+            ).style.display =
+                "block";
+
+
+            document.getElementById(
+                "reportMessage"
+            ).textContent =
+                `✅ Monthly report loaded for ${formatMonth(
+                    report.month
+                )}.`;
+
+
+            /*
+                Plastic
+            */
+
+            document.getElementById(
+                "monthlyPlastic"
+            ).textContent =
+                `${Number(
+                    report.totalKg || 0
+                ).toFixed(2)} kg`;
+
+
+            /*
+                Campaign participants
+            */
+
+            document.getElementById(
+                "monthlyParticipants"
+            ).textContent =
+                Number(
+                    report.campaignParticipants || 0
+                );
+
+
+            /*
+                Tasks
+            */
+
+            document.getElementById(
+                "monthlyTasks"
+            ).textContent =
+                Number(
+                    report.tasksCompleted || 0
+                );
+
+
+            /*
+                Points
+            */
+
+            document.getElementById(
+                "monthlyPoints"
+            ).textContent =
+                Number(
+                    report.taskPoints || 0
+                );
+
+
+            /*
+                The current server does not expose
+                monthly volunteer registrations.
+
+                Therefore the Volunteers card here
+                shows the overall volunteer count.
+            */
+
+            document.getElementById(
+                "monthlyVolunteers"
+            ).textContent =
+                Number(
+                    getOverallVolunteerCount()
+                );
+
+
+            /*
+                Plastic type report
+            */
+
+            renderPlasticTypes(
+                report
+            );
+
+        }
+
+
+
+        /* =====================================================
+           OVERALL VOLUNTEER COUNT
+        ===================================================== */
+
+        function getOverallVolunteerCount() {
+
+            return Number(
+                document.getElementById(
+                    "volunteers"
+                ).textContent || 0
+            );
+
+        }
+
+
+
+        /* =====================================================
+           PLASTIC TYPE REPORT
+        ===================================================== */
+
+        function renderPlasticTypes(
+            report
+        ) {
+
+            const container =
+                document.getElementById(
+                    "plasticTypeContainer"
+                );
+
+
+            const types =
+                Array.isArray(
+                    report.plasticTypes
+                )
+                    ? report.plasticTypes
+                    : [];
+
+
+            if (
+                types.length === 0
+            ) {
+
+                container.innerHTML =
+                    `
+                    <div class="report-message">
+                        No plastic collection data available for this month.
+                    </div>
+                    `;
+
+                return;
+
+            }
+
+
+            /*
+                Calculate total kilograms
+                for percentage.
+            */
+
+            let total =
+                0;
+
+
+            types.forEach(
+                item => {
+
+                    total +=
+                        Number(
+                            item.kilograms || 0
+                        );
+
+                }
+            );
+
+
+            let html = `
+                <div class="table-wrapper">
+
+                    <table>
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    Plastic Type
+                                </th>
+
+                                <th>
+                                    Collected
+                                </th>
+
+                                <th>
+                                    Percentage
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+            `;
+
+
+            types.forEach(
+                item => {
+
+                    const type =
+                        item.plastic_type ||
+                        "Others";
+
+
+                    const kg =
+                        Number(
+                            item.kilograms || 0
+                        );
+
+
+                    const percentage =
+                        total > 0
+                            ? (
+                                kg / total
+                            ) * 100
+                            : 0;
+
+
+                    html += `
+                        <tr>
+
+                            <td>
+                                ${escapeHtml(
+                                    formatPlasticType(
+                                        type
+                                    )
+                                )}
+                            </td>
+
+                            <td>
+                                ${kg.toFixed(2)} kg
+                            </td>
+
+                            <td>
+                                ${percentage.toFixed(1)}%
+                            </td>
+
+                        </tr>
+                    `;
+
+                }
+            );
+
+
+            html += `
+                        </tbody>
+
+                    </table>
+
+                </div>
+            `;
+
+
+            container.innerHTML =
+                html;
+
+        }
+
+
+
+        /* =====================================================
+           FORMAT PLASTIC TYPE
+        ===================================================== */
+
+        function formatPlasticType(
+            type
+        ) {
+
+            const value =
+                String(type)
+                    .trim()
+                    .toLowerCase();
+
+
+            const names = {
+
+                bottles:
+                    "🍼 Bottles",
+
+                bags:
+                    "🛍️ Bags",
+
+                wrappers:
+                    "📦 Wrappers",
+
+                others:
+                    "♻️ Others"
+
+            };
+
+
+            return (
+                names[value] ||
+                value.charAt(0).toUpperCase() +
+                value.slice(1)
+            );
+
+        }
+
+
+
+        /* =====================================================
+           FORMAT MONTH
+        ===================================================== */
+
+        function formatMonth(
+            value
+        ) {
+
+            if (!value) {
+
+                return "Selected Month";
+
+            }
+
+
+            const parts =
+                String(value).split("-");
+
+
+            if (
+                parts.length !== 2
+            ) {
+
+                return value;
+
+            }
+
+
+            const year =
+                Number(parts[0]);
+
+
+            const month =
+                Number(parts[1]) - 1;
+
+
+            const date =
+                new Date(
+                    year,
+                    month,
+                    1
+                );
+
+
+            return date.toLocaleString(
+                "en-US",
+                {
+                    month: "long",
+                    year: "numeric"
+                }
+            );
+
+        }
+
+
+
+        /* =====================================================
+           ESCAPE HTML
+        ===================================================== */
+
+        function escapeHtml(
+            value
+        ) {
+
+            return String(value)
+                .replace(
+                    /&/g,
+                    "&amp;"
+                )
+                .replace(
+                    /</g,
+                    "&lt;"
+                )
+                .replace(
+                    />/g,
+                    "&gt;"
+                )
+                .replace(
+                    /"/g,
+                    "&quot;"
+                )
+                .replace(
+                    /'/g,
+                    "&#039;"
+                );
+
+        }
+
+    </script>
+
+</body>
+</html>

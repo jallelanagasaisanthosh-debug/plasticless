@@ -1,0 +1,1650 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Campaigns | PlasticLess</title>
+
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/navbar.css">
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f5faf7;
+            color: #173b27;
+        }
+
+        /* =====================================================
+           HERO
+        ===================================================== */
+
+        .campaign-hero {
+            min-height: 390px;
+            padding: 90px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+
+            background:
+                linear-gradient(
+                    rgba(10, 70, 35, 0.72),
+                    rgba(10, 70, 35, 0.72)
+                ),
+                url("images/campaign-bg.jpg");
+
+            background-size: cover;
+            background-position: center;
+        }
+
+        .campaign-hero-content {
+            max-width: 850px;
+            color: white;
+        }
+
+        .campaign-hero h1 {
+            margin: 0 0 18px;
+            font-size: 52px;
+            line-height: 1.1;
+        }
+
+        .campaign-hero p {
+            margin: 0 auto;
+            max-width: 700px;
+            font-size: 19px;
+            line-height: 1.7;
+        }
+
+        /* =====================================================
+           CAMPAIGN SECTION
+        ===================================================== */
+
+        .campaign-section {
+            padding: 70px 6%;
+            max-width: 1400px;
+            margin: auto;
+        }
+
+        .section-heading {
+            text-align: center;
+            margin-bottom: 45px;
+        }
+
+        .section-heading .small-title {
+            color: #16a34a;
+            font-weight: 800;
+            font-size: 14px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .section-heading h2 {
+            margin: 10px 0;
+            font-size: 38px;
+            color: #14532d;
+        }
+
+        .section-heading p {
+            max-width: 700px;
+            margin: auto;
+            color: #607468;
+            line-height: 1.7;
+        }
+
+        /* =====================================================
+           MIDDLE SUCCESS / ERROR MESSAGE
+        ===================================================== */
+
+        .campaign-message {
+            position: fixed;
+
+            top: 50%;
+            left: 50%;
+
+            transform:
+                translate(-50%, -50%)
+                scale(0.75);
+
+            width: min(470px, 90%);
+
+            padding: 32px 30px;
+
+            border-radius: 22px;
+
+            text-align: center;
+
+            font-size: 17px;
+            font-weight: 700;
+            line-height: 1.6;
+
+            z-index: 100000;
+
+            opacity: 0;
+            visibility: hidden;
+
+            pointer-events: none;
+
+            box-shadow:
+                0 30px 80px rgba(0, 0, 0, 0.25);
+
+            transition:
+                opacity 0.3s ease,
+                transform 0.3s ease,
+                visibility 0.3s ease;
+        }
+
+        .campaign-message::before {
+            display: block;
+
+            font-size: 52px;
+
+            margin-bottom: 12px;
+        }
+
+        /* SUCCESS */
+
+        .campaign-message.success {
+            opacity: 1;
+
+            visibility: visible;
+
+            transform:
+                translate(-50%, -50%)
+                scale(1);
+
+            background: #ffffff;
+
+            color: #166534;
+
+            border: 2px solid #86efac;
+        }
+
+        .campaign-message.success::before {
+            content: "🎉";
+        }
+
+        /* ERROR */
+
+        .campaign-message.error {
+            opacity: 1;
+
+            visibility: visible;
+
+            transform:
+                translate(-50%, -50%)
+                scale(1);
+
+            background: #ffffff;
+
+            color: #991b1b;
+
+            border: 2px solid #fca5a5;
+        }
+
+        .campaign-message.error::before {
+            content: "⚠️";
+        }
+
+        /* DARK BACKGROUND */
+
+        .campaign-message.success::after,
+        .campaign-message.error::after {
+
+            content: "";
+
+            position: fixed;
+
+            top: 50%;
+            left: 50%;
+
+            width: 100vw;
+            height: 100vh;
+
+            transform:
+                translate(-50%, -50%);
+
+            background:
+                rgba(8, 35, 20, 0.38);
+
+            z-index: -1;
+
+            pointer-events: none;
+        }
+
+        /* =====================================================
+           CAMPAIGN GRID
+        ===================================================== */
+
+        .campaign-grid {
+            display: grid;
+            grid-template-columns:
+                repeat(3, minmax(0, 1fr));
+
+            gap: 28px;
+        }
+
+        /* =====================================================
+           CAMPAIGN CARD
+        ===================================================== */
+
+        .campaign-card {
+            background: white;
+
+            border-radius: 20px;
+
+            overflow: hidden;
+
+            border: 1px solid #e0eee5;
+
+            box-shadow:
+                0 10px 30px
+                rgba(20, 83, 45, 0.08);
+
+            display: flex;
+            flex-direction: column;
+
+            transition:
+                transform 0.25s ease,
+                box-shadow 0.25s ease;
+        }
+
+        .campaign-card:hover {
+            transform: translateY(-7px);
+
+            box-shadow:
+                0 18px 40px
+                rgba(20, 83, 45, 0.14);
+        }
+
+        /* =====================================================
+           CAMPAIGN IMAGE
+        ===================================================== */
+
+        .campaign-image {
+            height: 210px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #dcfce7,
+                    #bbf7d0
+                );
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            overflow: hidden;
+        }
+
+        .campaign-image img {
+            width: 100%;
+            height: 100%;
+
+            object-fit: cover;
+        }
+
+        .default-campaign-icon {
+            font-size: 70px;
+        }
+
+        /* =====================================================
+           CONTENT
+        ===================================================== */
+
+        .campaign-content {
+            padding: 25px;
+
+            display: flex;
+            flex-direction: column;
+
+            flex: 1;
+        }
+
+        .campaign-date {
+            color: #16a34a;
+
+            font-size: 13px;
+
+            font-weight: 700;
+
+            margin-bottom: 12px;
+        }
+
+        .campaign-content h3 {
+            margin: 0 0 12px;
+
+            color: #14532d;
+
+            font-size: 23px;
+
+            line-height: 1.3;
+        }
+
+        .campaign-description {
+            color: #617267;
+
+            line-height: 1.7;
+
+            margin: 0 0 20px;
+
+            flex: 1;
+        }
+
+        /* =====================================================
+           INFO
+        ===================================================== */
+
+        .campaign-info {
+            display: grid;
+
+            grid-template-columns:
+                1fr 1fr;
+
+            gap: 10px;
+
+            margin-bottom: 20px;
+        }
+
+        .info-box {
+            background: #f5faf7;
+
+            border-radius: 10px;
+
+            padding: 12px;
+        }
+
+        .info-label {
+            display: block;
+
+            color: #789083;
+
+            font-size: 11px;
+
+            text-transform: uppercase;
+
+            font-weight: 700;
+
+            margin-bottom: 4px;
+        }
+
+        .info-value {
+            color: #28583b;
+
+            font-weight: 700;
+
+            font-size: 14px;
+        }
+
+        /* =====================================================
+           PROGRESS
+        ===================================================== */
+
+        .progress-wrap {
+            margin-bottom: 20px;
+        }
+
+        .progress-top {
+            display: flex;
+
+            justify-content: space-between;
+
+            font-size: 12px;
+
+            font-weight: 700;
+
+            color: #52705e;
+
+            margin-bottom: 7px;
+        }
+
+        .progress-bar {
+            height: 8px;
+
+            background: #e5eee8;
+
+            border-radius: 20px;
+
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+
+            background: #16a34a;
+
+            border-radius: 20px;
+
+            transition:
+                width 0.4s ease;
+        }
+
+        /* =====================================================
+           JOIN BUTTON
+        ===================================================== */
+
+        .join-btn {
+            width: 100%;
+
+            padding: 13px 18px;
+
+            border: none;
+
+            border-radius: 10px;
+
+            background: #16a34a;
+
+            color: white;
+
+            font-size: 15px;
+
+            font-weight: 800;
+
+            cursor: pointer;
+
+            transition:
+                background 0.2s ease,
+                transform 0.2s ease;
+        }
+
+        .join-btn:hover:not(:disabled) {
+            background: #15803d;
+
+            transform:
+                translateY(-1px);
+        }
+
+        .join-btn:disabled {
+            cursor: not-allowed;
+
+            opacity: 0.8;
+        }
+
+        .join-btn.joined {
+            background: #166534;
+        }
+
+        .join-btn.full {
+            background: #94a3a8;
+        }
+
+        /* =====================================================
+           LOADING / EMPTY / ERROR
+        ===================================================== */
+
+        .loading-box,
+        .empty-box,
+        .error-box {
+
+            grid-column: 1 / -1;
+
+            text-align: center;
+
+            background: white;
+
+            border-radius: 18px;
+
+            padding: 55px 25px;
+
+            border: 1px solid #e0eee5;
+        }
+
+        .loading-box {
+            color: #4b6354;
+        }
+
+        .empty-icon {
+            font-size: 55px;
+
+            margin-bottom: 15px;
+        }
+
+        .empty-box h3,
+        .error-box h3 {
+            color: #14532d;
+
+            margin-bottom: 10px;
+        }
+
+        .empty-box p,
+        .error-box p {
+            color: #68796e;
+        }
+
+        .retry-btn {
+            margin-top: 15px;
+
+            border: none;
+
+            border-radius: 10px;
+
+            background: #16a34a;
+
+            color: white;
+
+            padding: 12px 22px;
+
+            font-weight: 700;
+
+            cursor: pointer;
+        }
+
+        /* =====================================================
+           CTA
+        ===================================================== */
+
+        .campaign-cta {
+            margin: 30px 6% 80px;
+
+            padding: 55px 30px;
+
+            border-radius: 25px;
+
+            text-align: center;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #14532d,
+                    #166534
+                );
+
+            color: white;
+        }
+
+        .campaign-cta h2 {
+            font-size: 34px;
+
+            margin: 0 0 12px;
+        }
+
+        .campaign-cta p {
+            max-width: 650px;
+
+            margin: 0 auto 25px;
+
+            line-height: 1.7;
+
+            color: #dcfce7;
+        }
+
+        .cta-btn {
+            display: inline-block;
+
+            padding: 13px 25px;
+
+            border-radius: 10px;
+
+            background: white;
+
+            color: #166534;
+
+            text-decoration: none;
+
+            font-weight: 800;
+        }
+
+        /* =====================================================
+           FOOTER
+        ===================================================== */
+
+        footer {
+            background: #0f2f1c;
+
+            color: white;
+
+            text-align: center;
+
+            padding: 35px 20px;
+        }
+
+        footer h2 {
+            margin-top: 0;
+        }
+
+        footer p {
+            color: #b8cfc0;
+        }
+
+        /* =====================================================
+           RESPONSIVE
+        ===================================================== */
+
+        @media (max-width: 1050px) {
+
+            .campaign-grid {
+                grid-template-columns:
+                    repeat(2, minmax(0, 1fr));
+            }
+
+            .campaign-hero h1 {
+                font-size: 44px;
+            }
+        }
+
+        @media (max-width: 700px) {
+
+            .campaign-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .campaign-section {
+                padding: 50px 20px;
+            }
+
+            .campaign-hero {
+                min-height: 330px;
+
+                padding: 70px 20px;
+            }
+
+            .campaign-hero h1 {
+                font-size: 36px;
+            }
+
+            .campaign-hero p {
+                font-size: 16px;
+            }
+
+            .section-heading h2 {
+                font-size: 30px;
+            }
+
+            .campaign-cta {
+                margin:
+                    20px 20px 55px;
+            }
+
+            .campaign-cta h2 {
+                font-size: 28px;
+            }
+
+            .campaign-message {
+                width: 88%;
+
+                padding:
+                    27px 20px;
+
+                font-size: 15px;
+            }
+
+            .campaign-message::before {
+                font-size: 42px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- =====================================================
+         COMMON NAVBAR
+    ===================================================== -->
+
+    <div class="navbar"></div>
+
+
+    <!-- =====================================================
+         HERO
+    ===================================================== -->
+
+    <section class="campaign-hero">
+
+        <div class="campaign-hero-content">
+
+            <h1>
+                Join a Campaign
+            </h1>
+
+            <p>
+                Take action with your community.
+                Join PlasticLess campaigns and help
+                create a cleaner, greener future.
+            </p>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         CAMPAIGNS
+    ===================================================== -->
+
+    <main>
+
+        <section class="campaign-section">
+
+            <div class="section-heading">
+
+                <div class="small-title">
+                    TAKE ACTION
+                </div>
+
+                <h2>
+                    Active Campaigns
+                </h2>
+
+                <p>
+                    Choose a campaign, join the movement,
+                    and make a real difference in your community.
+                </p>
+
+            </div>
+
+
+            <!-- SUCCESS / ERROR MESSAGE -->
+
+            <div
+                id="campaignMessage"
+                class="campaign-message"
+            ></div>
+
+
+            <!-- CAMPAIGN GRID -->
+
+            <div
+                id="campaignGrid"
+                class="campaign-grid"
+            >
+
+                <div class="loading-box">
+                    🌱 Loading campaigns...
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             CTA
+        ================================================== -->
+
+        <section class="campaign-cta">
+
+            <h2>
+                Ready to Make a Difference?
+            </h2>
+
+            <p>
+                Complete your PlasticLess tasks and
+                participate in campaigns to make your
+                plastic-free journey even stronger.
+            </p>
+
+            <a
+                href="tasks.html"
+                class="cta-btn"
+            >
+                View Tasks →
+            </a>
+
+        </section>
+
+    </main>
+
+
+    <!-- =====================================================
+         FOOTER
+    ===================================================== -->
+
+    <footer>
+
+        <h2>
+            PlasticLess 🌍
+        </h2>
+
+        <p>
+            Together for a cleaner and greener future.
+        </p>
+
+        <p>
+            © 2026 PlasticLess. All Rights Reserved.
+        </p>
+
+    </footer>
+
+
+    <!-- =====================================================
+         COMMON NAVBAR SCRIPT
+    ===================================================== -->
+
+    <script src="js/navbar.js"></script>
+
+
+    <script>
+
+        let currentUser = null;
+
+
+        /* =====================================================
+           LOAD USER
+        ===================================================== */
+
+        async function loadCurrentUser() {
+
+            try {
+
+                const response =
+                    await fetch(
+                        "/api/me",
+                        {
+                            credentials: "include"
+                        }
+                    );
+
+                const data =
+                    await response.json();
+
+                if (data.loggedIn) {
+
+                    currentUser =
+                        data.user;
+
+                } else {
+
+                    currentUser = null;
+
+                }
+
+            } catch (error) {
+
+                console.error(
+                    "User loading error:",
+                    error
+                );
+
+                currentUser = null;
+            }
+        }
+
+
+        /* =====================================================
+           LOAD CAMPAIGNS
+        ===================================================== */
+
+        async function loadCampaigns() {
+
+            const grid =
+                document.getElementById(
+                    "campaignGrid"
+                );
+
+            grid.innerHTML = `
+                <div class="loading-box">
+                    🌱 Loading campaigns...
+                </div>
+            `;
+
+
+            try {
+
+                await loadCurrentUser();
+
+
+                const response =
+                    await fetch(
+                        "/api/campaigns",
+                        {
+                            credentials: "include"
+                        }
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                if (
+                    !response.ok ||
+                    data.success === false
+                ) {
+
+                    throw new Error(
+                        data.message ||
+                        "Unable to load campaigns."
+                    );
+
+                }
+
+
+                const campaigns =
+                    Array.isArray(
+                        data.campaigns
+                    )
+                        ? data.campaigns
+                        : [];
+
+
+                if (
+                    campaigns.length === 0
+                ) {
+
+                    grid.innerHTML = `
+
+                        <div class="empty-box">
+
+                            <div class="empty-icon">
+                                🌱
+                            </div>
+
+                            <h3>
+                                No Active Campaigns
+                            </h3>
+
+                            <p>
+                                There are no campaigns
+                                available right now.
+                            </p>
+
+                        </div>
+
+                    `;
+
+                    return;
+                }
+
+
+                grid.innerHTML = "";
+
+
+                for (
+                    const campaign
+                    of campaigns
+                ) {
+
+                    let joined = false;
+
+
+                    if (
+                        currentUser &&
+                        currentUser.id
+                    ) {
+
+                        joined =
+                            await checkCampaignStatus(
+                                campaign.id
+                            );
+
+                    }
+
+
+                    const card =
+                        createCampaignCard(
+                            campaign,
+                            joined
+                        );
+
+
+                    grid.appendChild(
+                        card
+                    );
+
+                }
+
+            } catch (error) {
+
+                console.error(
+                    "Campaign loading error:",
+                    error
+                );
+
+
+                grid.innerHTML = `
+
+                    <div class="error-box">
+
+                        <div class="empty-icon">
+                            ⚠️
+                        </div>
+
+                        <h3>
+                            Unable to Load Campaigns
+                        </h3>
+
+                        <p>
+                            ${escapeHTML(
+                                error.message ||
+                                "Please make sure Node.js, Apache and MySQL are running."
+                            )}
+                        </p>
+
+                        <button
+                            class="retry-btn"
+                            onclick="loadCampaigns()"
+                        >
+                            Try Again
+                        </button>
+
+                    </div>
+
+                `;
+            }
+
+        }
+
+
+        /* =====================================================
+           CHECK IF USER JOINED
+        ===================================================== */
+
+        async function checkCampaignStatus(
+            campaignId
+        ) {
+
+            try {
+
+                const response =
+                    await fetch(
+                        `/api/campaigns/${campaignId}/status`,
+                        {
+                            credentials: "include"
+                        }
+                    );
+
+
+                if (!response.ok) {
+
+                    return false;
+
+                }
+
+
+                const data =
+                    await response.json();
+
+
+                return (
+                    data.joined === true ||
+                    data.isJoined === true ||
+                    data.alreadyJoined === true
+                );
+
+            } catch (error) {
+
+                console.error(
+                    "Campaign status error:",
+                    error
+                );
+
+                return false;
+
+            }
+
+        }
+
+
+        /* =====================================================
+           CREATE CAMPAIGN CARD
+        ===================================================== */
+
+        function createCampaignCard(
+            campaign,
+            joined
+        ) {
+
+            const card =
+                document.createElement(
+                    "article"
+                );
+
+
+            card.className =
+                "campaign-card";
+
+
+            const id =
+                Number(
+                    campaign.id
+                );
+
+
+            const title =
+                campaign.title ||
+                "PlasticLess Campaign";
+
+
+            const description =
+                campaign.description ||
+                "Join this campaign and help reduce plastic pollution.";
+
+
+            const location =
+                campaign.location ||
+                "Community";
+
+
+            const date =
+                campaign.campaign_date ||
+                "";
+
+
+            const count =
+                Number(
+                    campaign.participant_count ||
+                    0
+                );
+
+
+            const max =
+                Number(
+                    campaign.max_participants ||
+                    100
+                );
+
+
+            const percentage =
+                max > 0
+                    ? Math.min(
+                        100,
+                        Math.round(
+                            (count / max) *
+                            100
+                        )
+                    )
+                    : 0;
+
+
+            let formattedDate =
+                "Date not specified";
+
+
+            if (date) {
+
+                const d =
+                    new Date(date);
+
+
+                if (
+                    !isNaN(
+                        d.getTime()
+                    )
+                ) {
+
+                    formattedDate =
+                        d.toLocaleDateString(
+                            "en-IN",
+                            {
+                                day: "2-digit",
+                                month: "short",
+                                year: "numeric"
+                            }
+                        );
+
+                } else {
+
+                    formattedDate =
+                        date;
+
+                }
+
+            }
+
+
+            /* =================================================
+               IMAGE
+            ================================================= */
+
+            let imageHTML = `
+
+                <div class="campaign-image">
+
+                    <div class="default-campaign-icon">
+                        🌱
+                    </div>
+
+                </div>
+
+            `;
+
+
+            if (
+                campaign.image &&
+                String(
+                    campaign.image
+                ).trim() !== ""
+            ) {
+
+                imageHTML = `
+
+                    <div class="campaign-image">
+
+                        <img
+                            src="${escapeHTML(
+                                campaign.image
+                            )}"
+                            alt="${escapeHTML(
+                                title
+                            )}"
+                            onerror="
+                                this.style.display='none';
+                                this.parentElement.innerHTML='<div class=&quot;default-campaign-icon&quot;>🌱</div>';
+                            "
+                        >
+
+                    </div>
+
+                `;
+
+            }
+
+
+            /* =================================================
+               BUTTON CONDITION
+            ================================================= */
+
+            let buttonHTML = "";
+
+
+            if (joined) {
+
+                buttonHTML = `
+
+                    <button
+                        class="join-btn joined"
+                        disabled
+                    >
+                        ✓ Joined Campaign
+                    </button>
+
+                `;
+
+            } else if (
+                count >= max
+            ) {
+
+                buttonHTML = `
+
+                    <button
+                        class="join-btn full"
+                        disabled
+                    >
+                        Campaign Full
+                    </button>
+
+                `;
+
+            } else {
+
+                buttonHTML = `
+
+                    <button
+                        class="join-btn"
+                        onclick="joinCampaign(
+                            ${id},
+                            this
+                        )"
+                    >
+                        Join Campaign
+                    </button>
+
+                `;
+
+            }
+
+
+            /* =================================================
+               CARD HTML
+            ================================================= */
+
+            card.innerHTML = `
+
+                ${imageHTML}
+
+                <div class="campaign-content">
+
+                    <div class="campaign-date">
+                        📅 ${escapeHTML(
+                            formattedDate
+                        )}
+                    </div>
+
+                    <h3>
+                        ${escapeHTML(
+                            title
+                        )}
+                    </h3>
+
+                    <p class="campaign-description">
+                        ${escapeHTML(
+                            description
+                        )}
+                    </p>
+
+
+                    <div class="campaign-info">
+
+                        <div class="info-box">
+
+                            <span class="info-label">
+                                Location
+                            </span>
+
+                            <span class="info-value">
+                                📍 ${escapeHTML(
+                                    location
+                                )}
+                            </span>
+
+                        </div>
+
+
+                        <div class="info-box">
+
+                            <span class="info-label">
+                                Participants
+                            </span>
+
+                            <span class="info-value">
+                                👥 ${count}/${max}
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="progress-wrap">
+
+                        <div class="progress-top">
+
+                            <span>
+                                Participation
+                            </span>
+
+                            <span>
+                                ${percentage}%
+                            </span>
+
+                        </div>
+
+
+                        <div class="progress-bar">
+
+                            <div
+                                class="progress-fill"
+                                style="width:${percentage}%"
+                            ></div>
+
+                        </div>
+
+                    </div>
+
+
+                    ${buttonHTML}
+
+                </div>
+
+            `;
+
+
+            return card;
+
+        }
+
+
+        /* =====================================================
+           JOIN CAMPAIGN
+        ===================================================== */
+
+        async function joinCampaign(
+            campaignId,
+            button
+        ) {
+
+            if (!currentUser) {
+
+                /*
+                 * IMPORTANT:
+                 * No browser alert here.
+                 * Login condition remains the same.
+                 */
+
+                showCampaignMessage(
+                    "Please login first to join a campaign.",
+                    "error"
+                );
+
+                setTimeout(
+                    () => {
+
+                        window.location.href =
+                            "login.html";
+
+                    },
+                    1500
+                );
+
+                return;
+            }
+
+
+            button.disabled = true;
+
+            button.textContent =
+                "Joining...";
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        `/api/campaigns/${campaignId}/join`,
+                        {
+                            method: "POST",
+
+                            credentials: "include",
+
+                            headers: {
+                                "Content-Type":
+                                    "application/json"
+                            }
+                        }
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                if (
+                    !response.ok ||
+                    data.success === false
+                ) {
+
+                    throw new Error(
+                        data.message ||
+                        "Unable to join campaign."
+                    );
+
+                }
+
+
+                /* =============================================
+                   SUCCESS BUTTON
+                ============================================= */
+
+                button.textContent =
+                    "✓ Joined Campaign";
+
+
+                button.classList.add(
+                    "joined"
+                );
+
+
+                button.disabled = true;
+
+
+                /* =============================================
+                   SUCCESS BOX
+                ============================================= */
+
+                showCampaignMessage(
+
+                    data.alreadyJoined
+                        ? "You already joined this campaign."
+                        : "You successfully joined the campaign!",
+
+                    "success"
+
+                );
+
+
+                /* =============================================
+                   REFRESH CAMPAIGNS
+                ============================================= */
+
+                setTimeout(
+                    () => loadCampaigns(),
+                    700
+                );
+
+
+            } catch (error) {
+
+                console.error(
+                    "Join campaign error:",
+                    error
+                );
+
+
+                button.disabled = false;
+
+
+                button.textContent =
+                    "Join Campaign";
+
+
+                showCampaignMessage(
+
+                    error.message ||
+                    "Unable to join campaign.",
+
+                    "error"
+
+                );
+
+            }
+
+        }
+
+
+        /* =====================================================
+           SHOW MESSAGE
+        ===================================================== */
+
+        function showCampaignMessage(
+            message,
+            type
+        ) {
+
+            const box =
+                document.getElementById(
+                    "campaignMessage"
+                );
+
+
+            if (!box) {
+                return;
+            }
+
+
+            /* Clear old timeout */
+
+            if (
+                window.campaignMessageTimer
+            ) {
+
+                clearTimeout(
+                    window.campaignMessageTimer
+                );
+
+            }
+
+
+            box.textContent =
+                message;
+
+
+            box.className =
+                `campaign-message ${type}`;
+
+
+            /* ================================================
+               AUTO HIDE
+            ================================================ */
+
+            window.campaignMessageTimer =
+                setTimeout(
+                    () => {
+
+                        box.className =
+                            "campaign-message";
+
+                        box.textContent =
+                            "";
+
+                    },
+                    3000
+                );
+
+        }
+
+
+        /* =====================================================
+           ESCAPE HTML
+        ===================================================== */
+
+        function escapeHTML(
+            value
+        ) {
+
+            return String(value)
+
+                .replace(
+                    /&/g,
+                    "&amp;"
+                )
+
+                .replace(
+                    /</g,
+                    "&lt;"
+                )
+
+                .replace(
+                    />/g,
+                    "&gt;"
+                )
+
+                .replace(
+                    /"/g,
+                    "&quot;"
+                )
+
+                .replace(
+                    /'/g,
+                    "&#039;"
+                );
+
+        }
+
+
+        /* =====================================================
+           START
+        ===================================================== */
+
+        loadCampaigns();
+
+    </script>
+
+</body>
+</html>

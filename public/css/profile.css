@@ -1,0 +1,355 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background: #f5faf7;
+    color: #173b27;
+}
+
+/* =====================================================
+   PROFILE HERO
+===================================================== */
+
+.profile-hero {
+    padding: 70px 20px;
+    text-align: center;
+    color: white;
+
+    background:
+        linear-gradient(
+            rgba(10, 70, 35, 0.22),
+            rgba(10, 70, 35, 0.22)
+        ),
+        url("/images/profile-bg.png");
+
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.profile-hero h1 {
+    margin: 0 0 12px;
+    font-size: 48px;
+}
+
+.profile-hero p {
+    margin: 0;
+    font-size: 18px;
+}
+
+/* =====================================================
+   CONTAINER
+===================================================== */
+
+.profile-container {
+    max-width: 1100px;
+    margin: auto;
+    padding: 55px 5%;
+}
+
+/* =====================================================
+   PROFILE CARD
+===================================================== */
+
+.profile-card {
+    background: white;
+    border-radius: 22px;
+    padding: 35px;
+
+    box-shadow:
+        0 10px 30px rgba(20, 83, 45, 0.08);
+
+    border: 1px solid #dfebe3;
+}
+
+/* =====================================================
+   PROFILE TOP
+===================================================== */
+
+.profile-top {
+    display: flex;
+    align-items: center;
+    gap: 22px;
+
+    padding-bottom: 30px;
+
+    border-bottom: 1px solid #e5eee8;
+}
+
+.profile-icon {
+    width: 90px;
+    height: 90px;
+
+    flex-shrink: 0;
+
+    border-radius: 50%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #dcfce7;
+
+    font-size: 45px;
+}
+
+.profile-top h2 {
+    margin: 0 0 7px;
+
+    color: #14532d;
+    font-size: 28px;
+}
+
+.profile-top p {
+    margin: 0;
+    color: #718278;
+}
+
+/* =====================================================
+   ACCOUNT DETAILS
+===================================================== */
+
+.details-title {
+    margin: 30px 0 20px;
+
+    color: #14532d;
+    font-size: 23px;
+}
+
+.details-grid {
+    display: grid;
+
+    grid-template-columns: repeat(2, 1fr);
+
+    gap: 18px;
+}
+
+.detail-box {
+    padding: 20px;
+
+    border-radius: 14px;
+
+    background: #f7fbf8;
+
+    border: 1px solid #e2ece5;
+}
+
+.detail-label {
+    margin-bottom: 8px;
+
+    color: #75857b;
+
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.detail-value {
+    color: #14532d;
+
+    font-size: 17px;
+    font-weight: 800;
+
+    word-break: break-word;
+}
+
+/* =====================================================
+   STATISTICS
+===================================================== */
+
+.stats-title {
+    margin: 35px 0 20px;
+
+    color: #14532d;
+    font-size: 23px;
+}
+
+.stats-grid {
+    display: grid;
+
+    grid-template-columns: repeat(3, 1fr);
+
+    gap: 18px;
+}
+
+.stat-card {
+    padding: 25px 15px;
+
+    text-align: center;
+
+    border-radius: 16px;
+
+    background: #f0fdf4;
+
+    border: 1px solid #dcfce7;
+}
+
+.stat-icon {
+    font-size: 34px;
+}
+
+.stat-number {
+    margin-top: 8px;
+
+    color: #15803d;
+
+    font-size: 30px;
+    font-weight: 800;
+}
+
+.stat-label {
+    margin-top: 5px;
+
+    color: #68796e;
+
+    font-size: 13px;
+}
+
+/* =====================================================
+   PROFILE ACTIONS
+===================================================== */
+
+.profile-actions {
+    display: flex;
+
+    gap: 12px;
+
+    margin-top: 35px;
+    padding-top: 30px;
+
+    border-top: 1px solid #e5eee8;
+}
+
+.profile-btn {
+    padding: 13px 22px;
+
+    border-radius: 10px;
+
+    border: none;
+
+    text-decoration: none;
+
+    font-weight: 800;
+    cursor: pointer;
+
+    font-size: 14px;
+}
+
+.tasks-btn {
+    background: #16a34a;
+    color: white;
+}
+
+.campaign-btn {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.logout-btn {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.profile-btn:hover {
+    opacity: 0.88;
+}
+
+/* =====================================================
+   LOADING
+===================================================== */
+
+.loading {
+    text-align: center;
+
+    padding: 60px;
+
+    color: #63766a;
+}
+
+/* =====================================================
+   ERROR
+===================================================== */
+
+.error-box {
+    display: none;
+
+    margin-bottom: 20px;
+
+    padding: 17px;
+
+    text-align: center;
+
+    border-radius: 12px;
+
+    background: #fee2e2;
+
+    border: 1px solid #fecaca;
+
+    color: #991b1b;
+}
+
+/* =====================================================
+   FOOTER
+===================================================== */
+
+footer {
+    padding: 35px 20px;
+
+    text-align: center;
+
+    background: #0f2f1c;
+
+    color: white;
+}
+
+footer h2 {
+    margin: 0 0 8px;
+}
+
+footer p {
+    margin: 6px 0;
+
+    color: #b8cfc0;
+}
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media (max-width: 700px) {
+
+    .profile-hero h1 {
+        font-size: 36px;
+    }
+
+    .profile-container {
+        padding: 40px 20px;
+    }
+
+    .profile-card {
+        padding: 25px 20px;
+    }
+
+    .profile-top {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .details-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .profile-actions {
+        flex-direction: column;
+    }
+
+    .profile-btn {
+        text-align: center;
+    }
+}

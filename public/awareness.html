@@ -1,0 +1,1557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Awareness Programs | PlasticLess</title>
+
+    <!-- COMMON NAVBAR CSS -->
+    <link rel="stylesheet" href="css/navbar.css">
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f4faf5;
+            color: #173b24;
+        }
+
+        /* =========================
+           HERO
+        ========================= */
+
+        .awareness-hero {
+            min-height: 360px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 80px 20px;
+
+            background:
+                linear-gradient(
+                    rgba(8, 70, 34, 0.78),
+                    rgba(8, 70, 34, 0.78)
+                ),
+                url("images/awareness.jpg") center/cover no-repeat;
+        }
+
+        .hero-content {
+            max-width: 850px;
+            color: white;
+        }
+
+        .hero-icon {
+            font-size: 55px;
+            margin-bottom: 12px;
+        }
+
+        .hero-content h1 {
+            font-size: 48px;
+            margin-bottom: 18px;
+            font-weight: 800;
+        }
+
+        .hero-content p {
+            font-size: 19px;
+            line-height: 1.7;
+            opacity: 0.95;
+        }
+
+        /* =========================
+           MAIN
+        ========================= */
+
+        .container {
+            width: 92%;
+            max-width: 1200px;
+            margin: auto;
+        }
+
+        .section-title {
+            text-align: center;
+            padding: 60px 0 35px;
+        }
+
+        .section-title h2 {
+            font-size: 34px;
+            color: #176b36;
+            margin-bottom: 12px;
+        }
+
+        .section-title p {
+            color: #66756b;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+        /* =========================
+           MESSAGE
+        ========================= */
+
+        .message {
+            display: none;
+            max-width: 700px;
+            margin: 0 auto 25px;
+            padding: 15px 20px;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .message.success {
+            display: block;
+            background: #dff5e5;
+            color: #176b36;
+            border: 1px solid #b8e3c3;
+        }
+
+        .message.error {
+            display: block;
+            background: #ffe4e4;
+            color: #a00000;
+            border: 1px solid #f1b7b7;
+        }
+
+        /* =========================
+           PROGRAM GRID
+        ========================= */
+
+        .program-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 28px;
+            padding-bottom: 70px;
+        }
+
+        /* =========================
+           CARD
+        ========================= */
+
+        .program-card {
+            background: #ffffff;
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow: 0 8px 28px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e6efe8;
+            transition: all 0.3s ease;
+
+            display: flex;
+            flex-direction: column;
+        }
+
+        .program-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.13);
+        }
+
+        /* =========================
+           IMAGE
+        ========================= */
+
+        .program-image {
+            height: 205px;
+            background: linear-gradient(
+                135deg,
+                #d8f3dc,
+                #52b788
+            );
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            overflow: hidden;
+        }
+
+        .program-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .placeholder {
+            font-size: 65px;
+        }
+
+        /* =========================
+           CARD CONTENT
+        ========================= */
+
+        .program-content {
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+        }
+
+        .program-content h3 {
+            color: #176b36;
+            font-size: 22px;
+            line-height: 1.35;
+            margin-bottom: 12px;
+        }
+
+        .program-description {
+            color: #66756b;
+            font-size: 15px;
+            line-height: 1.65;
+            margin-bottom: 20px;
+            flex: 1;
+        }
+
+        /* =========================
+           INFORMATION
+        ========================= */
+
+        .program-info {
+            display: flex;
+            flex-direction: column;
+            gap: 11px;
+            margin-bottom: 20px;
+        }
+
+        .info-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #40584a;
+            font-size: 15px;
+        }
+
+        .info-icon {
+            width: 28px;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        /* =========================
+           PARTICIPANTS
+        ========================= */
+
+        .participants {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            background: #eef8f0;
+            color: #176b36;
+            border-radius: 20px;
+            padding: 7px 12px;
+            width: fit-content;
+            margin-bottom: 18px;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        /* =========================
+           BUTTON
+        ========================= */
+
+        .join-btn {
+            width: 100%;
+            padding: 13px 16px;
+            border: none;
+            border-radius: 9px;
+
+            background: #208b45;
+            color: white;
+
+            font-size: 16px;
+            font-weight: bold;
+
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .join-btn:hover {
+            background: #176b36;
+        }
+
+        .join-btn:disabled {
+            cursor: default;
+        }
+
+        .join-btn.joined {
+            background: #dff5e5;
+            color: #176b36;
+        }
+
+        .leave-btn {
+            margin-top: 8px;
+            background: #777;
+        }
+
+        .leave-btn:hover {
+            background: #555;
+        }
+
+        /* =========================
+           LOADING
+        ========================= */
+
+        .loading {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 70px 20px;
+            color: #176b36;
+            font-size: 18px;
+        }
+
+        .loading-icon {
+            font-size: 45px;
+            margin-bottom: 15px;
+        }
+
+        /* =========================
+           EMPTY
+        ========================= */
+
+        .empty {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 70px 20px;
+            color: #66756b;
+        }
+
+        .empty-icon {
+            font-size: 55px;
+            margin-bottom: 15px;
+        }
+
+        .empty h3 {
+            font-size: 25px;
+            margin-bottom: 10px;
+            color: #176b36;
+        }
+
+        /* =========================
+           CTA
+        ========================= */
+
+        .cta {
+            background:
+                linear-gradient(
+                    135deg,
+                    #176b36,
+                    #0d4f27
+                );
+
+            color: white;
+            text-align: center;
+            padding: 70px 20px;
+        }
+
+        .cta h2 {
+            font-size: 35px;
+            margin-bottom: 15px;
+        }
+
+        .cta p {
+            max-width: 720px;
+            margin: 0 auto 27px;
+            line-height: 1.7;
+            opacity: 0.92;
+        }
+
+        .cta-btn {
+            display: inline-block;
+            padding: 13px 28px;
+            background: white;
+            color: #176b36;
+            text-decoration: none;
+            border-radius: 9px;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+
+        .cta-btn:hover {
+            transform: translateY(-2px);
+            background: #eef8f0;
+        }
+
+        /* =========================
+           FOOTER
+        ========================= */
+
+        footer {
+            background: #0d2f1a;
+            color: #c9d8ce;
+            text-align: center;
+            padding: 25px;
+            font-size: 14px;
+        }
+
+        /* =========================
+           RESPONSIVE
+        ========================= */
+
+        @media (max-width: 950px) {
+
+            .program-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .hero-content h1 {
+                font-size: 40px;
+            }
+        }
+
+        @media (max-width: 650px) {
+
+            .program-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .awareness-hero {
+                min-height: 320px;
+                padding: 65px 20px;
+            }
+
+            .hero-icon {
+                font-size: 45px;
+            }
+
+            .hero-content h1 {
+                font-size: 32px;
+            }
+
+            .hero-content p {
+                font-size: 16px;
+            }
+
+            .section-title {
+                padding-top: 45px;
+            }
+
+            .section-title h2 {
+                font-size: 28px;
+            }
+
+            .cta h2 {
+                font-size: 28px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- =========================
+         COMMON NAVBAR
+    ========================= -->
+
+    <div class="navbar"></div>
+
+
+    <!-- =========================
+         HERO
+    ========================= -->
+
+    <section class="awareness-hero">
+
+        <div class="hero-content">
+
+            <div class="hero-icon">
+                📢
+            </div>
+
+            <h1>
+                Awareness Programs
+            </h1>
+
+            <p>
+                Educate, inspire and empower your community
+                to build a cleaner and plastic-free future.
+            </p>
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================
+         MAIN CONTENT
+    ========================= -->
+
+    <main class="container">
+
+        <div class="section-title">
+
+            <h2>
+                Join an Awareness Program
+            </h2>
+
+            <p>
+                Participate in awareness activities and help
+                spread the plastic-free message.
+            </p>
+
+        </div>
+
+
+        <!-- MESSAGE -->
+
+        <div id="message" class="message"></div>
+
+
+        <!-- PROGRAMS -->
+
+        <div id="programGrid" class="program-grid">
+
+            <div class="loading">
+
+                <div class="loading-icon">
+                    🌱
+                </div>
+
+                Loading awareness programs...
+
+            </div>
+
+        </div>
+
+    </main>
+
+
+    <!-- =========================
+         CTA
+    ========================= -->
+
+    <section class="cta">
+
+        <h2>
+            🌍 Be the Voice for a Plastic-Free Future
+        </h2>
+
+        <p>
+            Your participation can inspire others to make
+            better choices. Join an awareness program and
+            help create a cleaner community.
+        </p>
+
+        <a href="campaigns.html" class="cta-btn">
+            Explore Campaigns
+        </a>
+
+    </section>
+
+
+    <!-- =========================
+         FOOTER
+    ========================= -->
+
+    <footer>
+
+        © 2026 PlasticLess — Building a Plastic-Free Future 🌱
+
+    </footer>
+
+
+    <!-- =========================
+         NAVBAR JS
+    ========================= -->
+
+    <script src="js/navbar.js"></script>
+
+
+    <!-- =========================
+         AWARENESS JS
+    ========================= -->
+
+    <script>
+
+        let currentUser = null;
+
+
+        /* =========================================
+           PAGE START
+        ========================================= */
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            async function () {
+
+                await loadUser();
+
+                await loadPrograms();
+
+                /*
+                    If the user came back from login
+                    because they clicked Join Program,
+                    automatically join that program.
+                */
+
+                await processPendingJoin();
+            }
+        );
+
+
+        /* =========================================
+           LOAD CURRENT USER
+        ========================================= */
+
+        async function loadUser() {
+
+            try {
+
+                const response =
+                    await fetch(
+                        "/api/current-user",
+                        {
+                            credentials: "include",
+                            cache: "no-store"
+                        }
+                    );
+
+
+                if (!response.ok) {
+
+                    currentUser = null;
+
+                    return;
+                }
+
+
+                const data =
+                    await response.json();
+
+
+                /*
+                    Supported response formats:
+
+                    {
+                        success: true,
+                        user: {...}
+                    }
+
+                    OR
+
+                    {
+                        user: {...}
+                    }
+
+                    OR
+
+                    {
+                        id: ...
+                    }
+                */
+
+                if (data && data.user) {
+
+                    currentUser = data.user;
+
+                } else if (data && data.id) {
+
+                    currentUser = data;
+
+                } else {
+
+                    currentUser = null;
+                }
+
+
+            } catch (error) {
+
+                console.log(
+                    "User is not logged in."
+                );
+
+                currentUser = null;
+            }
+        }
+
+
+        /* =========================================
+           LOAD AWARENESS PROGRAMS
+        ========================================= */
+
+        async function loadPrograms() {
+
+            const grid =
+                document.getElementById(
+                    "programGrid"
+                );
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        "/api/awareness-programs",
+                        {
+                            credentials: "include",
+                            cache: "no-store"
+                        }
+                    );
+
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        "Unable to load programs"
+                    );
+                }
+
+
+                const data =
+                    await response.json();
+
+
+                if (!data.success) {
+
+                    throw new Error(
+                        data.message ||
+                        "Unable to load awareness programs"
+                    );
+                }
+
+
+                const programs =
+                    Array.isArray(data.programs)
+                        ? data.programs
+                        : [];
+
+
+                if (programs.length === 0) {
+
+                    grid.innerHTML = `
+
+                        <div class="empty">
+
+                            <div class="empty-icon">
+                                🌱
+                            </div>
+
+                            <h3>
+                                No Programs Available
+                            </h3>
+
+                            <p>
+                                New awareness programs
+                                will be added soon.
+                            </p>
+
+                        </div>
+
+                    `;
+
+                    return;
+                }
+
+
+                grid.innerHTML = "";
+
+
+                for (
+                    const program
+                    of programs
+                ) {
+
+                    const card =
+                        await createProgramCard(
+                            program
+                        );
+
+                    grid.appendChild(card);
+                }
+
+
+            } catch (error) {
+
+                console.error(
+                    "Awareness programs error:",
+                    error
+                );
+
+
+                grid.innerHTML = `
+
+                    <div class="empty">
+
+                        <div class="empty-icon">
+                            ⚠️
+                        </div>
+
+                        <h3>
+                            Unable to Load Programs
+                        </h3>
+
+                        <p>
+                            ${escapeHTML(
+                                error.message ||
+                                "Something went wrong."
+                            )}
+                        </p>
+
+                    </div>
+
+                `;
+            }
+        }
+
+
+        /* =========================================
+           CREATE PROGRAM CARD
+        ========================================= */
+
+        async function createProgramCard(
+            program
+        ) {
+
+            const card =
+                document.createElement("div");
+
+
+            card.className =
+                "program-card";
+
+
+            let imageHTML = `
+
+                <div class="placeholder">
+                    📢
+                </div>
+
+            `;
+
+
+            /*
+                DATABASE IMAGE
+            */
+
+            if (program.image) {
+
+                let imagePath =
+                    String(program.image);
+
+
+                if (
+                    !imagePath.startsWith("/") &&
+                    !imagePath.startsWith("http")
+                ) {
+
+                    imagePath =
+                        "images/" + imagePath;
+                }
+
+
+                imageHTML = `
+
+                    <img
+                        src="${escapeHTML(
+                            imagePath
+                        )}"
+                        alt="${escapeHTML(
+                            program.title ||
+                            "Awareness Program"
+                        )}"
+                        onerror="
+                            this.style.display='none';
+                            this.parentElement.innerHTML=
+                            '<div class=\\'placeholder\\'>📢</div>';
+                        "
+                    >
+
+                `;
+            }
+
+
+            /* =====================================
+               CHECK JOIN STATUS
+            ===================================== */
+
+            let joined = false;
+
+
+            if (currentUser) {
+
+                try {
+
+                    const statusResponse =
+                        await fetch(
+                            `/api/awareness-programs/${Number(
+                                program.id
+                            )}/status`,
+                            {
+                                credentials: "include",
+                                cache: "no-store"
+                            }
+                        );
+
+
+                    if (statusResponse.ok) {
+
+                        const statusData =
+                            await statusResponse.json();
+
+
+                        if (
+                            statusData.joined === true
+                        ) {
+
+                            joined = true;
+
+                        } else if (
+                            statusData.isJoined === true
+                        ) {
+
+                            joined = true;
+                        }
+                    }
+
+                } catch (error) {
+
+                    console.log(
+                        "Unable to check join status."
+                    );
+                }
+            }
+
+
+            /* =====================================
+               CARD HTML
+            ===================================== */
+
+            card.innerHTML = `
+
+                <div class="program-image">
+
+                    ${imageHTML}
+
+                </div>
+
+
+                <div class="program-content">
+
+                    <h3>
+                        ${escapeHTML(
+                            program.title ||
+                            "Awareness Program"
+                        )}
+                    </h3>
+
+
+                    <p class="program-description">
+
+                        ${escapeHTML(
+                            program.description ||
+                            "Join this awareness program and make a difference."
+                        )}
+
+                    </p>
+
+
+                    <div class="program-info">
+
+                        <div class="info-row">
+
+                            <span class="info-icon">
+                                📍
+                            </span>
+
+                            <span>
+                                ${escapeHTML(
+                                    program.location ||
+                                    "Community"
+                                )}
+                            </span>
+
+                        </div>
+
+
+                        <div class="info-row">
+
+                            <span class="info-icon">
+                                📅
+                            </span>
+
+                            <span>
+                                ${formatDate(
+                                    program.event_date
+                                )}
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="participants">
+
+                        👥
+
+                        <span>
+                            ${Number(
+                                program.participant_count || 0
+                            )}
+
+                            participant${
+                                Number(
+                                    program.participant_count || 0
+                                ) === 1
+                                    ? ""
+                                    : "s"
+                            }
+
+                        </span>
+
+                    </div>
+
+
+                    ${
+                        joined
+
+                        ? `
+
+                            <button
+                                class="join-btn joined"
+                                disabled
+                            >
+                                ✓ Joined
+                            </button>
+
+
+                            <button
+                                class="join-btn leave-btn"
+                                onclick="
+                                    leaveProgram(
+                                        ${Number(
+                                            program.id
+                                        )},
+                                        this
+                                    )
+                                "
+                            >
+                                Leave Program
+                            </button>
+
+                        `
+
+                        : `
+
+                            <button
+                                class="join-btn"
+                                onclick="
+                                    joinProgram(
+                                        ${Number(
+                                            program.id
+                                        )},
+                                        this
+                                    )
+                                "
+                            >
+                                Join Program
+                            </button>
+
+                        `
+                    }
+
+                </div>
+
+            `;
+
+
+            return card;
+        }
+
+
+        /* =========================================
+           JOIN PROGRAM
+        ========================================= */
+
+        async function joinProgram(
+            programId,
+            button
+        ) {
+
+            /*
+                If user is not logged in,
+                remember the program and return
+                to awareness after login.
+            */
+
+            if (!currentUser) {
+
+                sessionStorage.setItem(
+                    "returnAfterLogin",
+                    "awareness.html"
+                );
+
+
+                sessionStorage.setItem(
+                    "pendingAwarenessProgram",
+                    String(programId)
+                );
+
+
+                showMessage(
+                    "Please login first to join this awareness program.",
+                    "error"
+                );
+
+
+                setTimeout(
+                    function () {
+
+                        window.location.href =
+                            "login.html?returnTo=awareness.html";
+
+                    },
+                    800
+                );
+
+
+                return;
+            }
+
+
+            await sendJoinRequest(
+                programId,
+                button
+            );
+        }
+
+
+        /* =========================================
+           SEND JOIN REQUEST
+        ========================================= */
+
+        async function sendJoinRequest(
+            programId,
+            button
+        ) {
+
+            if (button) {
+
+                button.disabled = true;
+
+                button.textContent =
+                    "Joining...";
+            }
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        `/api/awareness-programs/${Number(
+                            programId
+                        )}/join`,
+                        {
+                            method: "POST",
+
+                            headers: {
+                                "Content-Type":
+                                    "application/json"
+                            },
+
+                            credentials: "include"
+                        }
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        data.message ||
+                        "Unable to join program"
+                    );
+                }
+
+
+                /*
+                    Remove pending join information
+                    after successful joining.
+                */
+
+                sessionStorage.removeItem(
+                    "pendingAwarenessProgram"
+                );
+
+                sessionStorage.removeItem(
+                    "returnAfterLogin"
+                );
+
+
+                showMessage(
+                    data.message ||
+                    "Successfully joined the awareness program!",
+                    "success"
+                );
+
+
+                /*
+                    Reload cards so participant
+                    count and Joined status update.
+                */
+
+                await loadPrograms();
+
+
+            } catch (error) {
+
+                console.error(
+                    "Join program error:",
+                    error
+                );
+
+
+                if (button) {
+
+                    button.disabled = false;
+
+                    button.textContent =
+                        "Join Program";
+                }
+
+
+                showMessage(
+                    error.message ||
+                    "Unable to join program.",
+                    "error"
+                );
+            }
+        }
+
+
+        /* =========================================
+           PROCESS PENDING JOIN AFTER LOGIN
+        ========================================= */
+
+        async function processPendingJoin() {
+
+            const pendingProgram =
+                sessionStorage.getItem(
+                    "pendingAwarenessProgram"
+                );
+
+
+            if (!pendingProgram) {
+
+                return;
+            }
+
+
+            /*
+                User must now be logged in.
+            */
+
+            if (!currentUser) {
+
+                return;
+            }
+
+
+            const programId =
+                Number(pendingProgram);
+
+
+            if (
+                !Number.isInteger(programId) ||
+                programId <= 0
+            ) {
+
+                sessionStorage.removeItem(
+                    "pendingAwarenessProgram"
+                );
+
+                return;
+            }
+
+
+            /*
+                Find the correct card button.
+            */
+
+            const buttons =
+                document.querySelectorAll(
+                    ".join-btn:not(.joined):not(.leave-btn)"
+                );
+
+
+            let targetButton = null;
+
+
+            for (
+                const button
+                of buttons
+            ) {
+
+                const onclickValue =
+                    button.getAttribute(
+                        "onclick"
+                    );
+
+
+                if (
+                    onclickValue &&
+                    onclickValue.includes(
+                        String(programId)
+                    )
+                ) {
+
+                    targetButton =
+                        button;
+
+                    break;
+                }
+            }
+
+
+            /*
+                Show message before automatic join.
+            */
+
+            showMessage(
+                "Login successful! Joining the awareness program...",
+                "success"
+            );
+
+
+            /*
+                Automatically join.
+            */
+
+            await sendJoinRequest(
+                programId,
+                targetButton
+            );
+        }
+
+
+        /* =========================================
+           LEAVE PROGRAM
+        ========================================= */
+
+        async function leaveProgram(
+            programId,
+            button
+        ) {
+
+            if (!currentUser) {
+
+                return;
+            }
+
+
+            const confirmed =
+                confirm(
+                    "Are you sure you want to leave this program?"
+                );
+
+
+            if (!confirmed) {
+
+                return;
+            }
+
+
+            button.disabled = true;
+
+            button.textContent =
+                "Leaving...";
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        `/api/awareness-programs/${Number(
+                            programId
+                        )}/leave`,
+                        {
+                            method: "DELETE",
+                            credentials: "include"
+                        }
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        data.message ||
+                        "Unable to leave program"
+                    );
+                }
+
+
+                showMessage(
+                    data.message ||
+                    "You left the program.",
+                    "success"
+                );
+
+
+                await loadPrograms();
+
+
+            } catch (error) {
+
+                console.error(
+                    "Leave program error:",
+                    error
+                );
+
+
+                button.disabled = false;
+
+                button.textContent =
+                    "Leave Program";
+
+
+                showMessage(
+                    error.message ||
+                    "Unable to leave program.",
+                    "error"
+                );
+            }
+        }
+
+
+        /* =========================================
+           FORMAT DATE
+        ========================================= */
+
+        function formatDate(
+            dateString
+        ) {
+
+            if (!dateString) {
+
+                return "Date to be announced";
+            }
+
+
+            const date =
+                new Date(dateString);
+
+
+            if (
+                isNaN(
+                    date.getTime()
+                )
+            ) {
+
+                return String(
+                    dateString
+                );
+            }
+
+
+            return date.toLocaleDateString(
+                "en-IN",
+                {
+                    day: "2-digit",
+                    month: "short",
+                    year: "numeric"
+                }
+            );
+        }
+
+
+        /* =========================================
+           SHOW MESSAGE
+        ========================================= */
+
+        function showMessage(
+            text,
+            type
+        ) {
+
+            const message =
+                document.getElementById(
+                    "message"
+                );
+
+
+            message.textContent =
+                text;
+
+
+            message.className =
+                `message ${type}`;
+
+
+            window.scrollTo({
+                top: 350,
+                behavior: "smooth"
+            });
+
+
+            setTimeout(
+                function () {
+
+                    message.className =
+                        "message";
+
+                },
+                4000
+            );
+        }
+
+
+        /* =========================================
+           ESCAPE HTML
+        ========================================= */
+
+        function escapeHTML(
+            value
+        ) {
+
+            if (
+                value === null ||
+                value === undefined
+            ) {
+
+                return "";
+            }
+
+
+            return String(value)
+
+                .replace(
+                    /&/g,
+                    "&amp;"
+                )
+
+                .replace(
+                    /</g,
+                    "&lt;"
+                )
+
+                .replace(
+                    />/g,
+                    "&gt;"
+                )
+
+                .replace(
+                    /"/g,
+                    "&quot;"
+                )
+
+                .replace(
+                    /'/g,
+                    "&#039;"
+                );
+        }
+
+    </script>
+
+</body>
+</html>

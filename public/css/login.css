@@ -1,0 +1,617 @@
+/* =========================================
+   LOGIN PAGE
+========================================= */
+
+.login-page {
+    min-height: calc(100vh - 75px);
+    display: grid;
+    grid-template-columns: 1.05fr 0.95fr;
+    background: #f5faf6;
+}
+
+
+/* =========================================
+   LEFT VISUAL
+========================================= */
+
+.login-visual {
+    min-height: calc(100vh - 75px);
+
+    background:
+        linear-gradient(
+            rgba(10, 65, 35, 0.68),
+            rgba(12, 92, 48, 0.78)
+        ),
+        url("../images/plastic-free.jpg");
+
+    background-size: cover;
+    background-position: center;
+
+    position: relative;
+}
+
+
+.visual-overlay {
+    min-height: 100%;
+
+    display: flex;
+    align-items: center;
+
+    padding: 70px 10%;
+}
+
+
+.visual-content {
+    max-width: 560px;
+    color: white;
+}
+
+
+.visual-label {
+    display: inline-block;
+
+    font-size: 12px;
+    font-weight: 700;
+
+    letter-spacing: 3px;
+
+    color: #c9ffd7;
+
+    margin-bottom: 20px;
+}
+
+
+.visual-content h1 {
+    font-size: clamp(45px, 5vw, 70px);
+
+    line-height: 1.05;
+
+    margin-bottom: 25px;
+
+    font-weight: 800;
+}
+
+
+.visual-content h1 span {
+    color: #a8f5bc;
+}
+
+
+.visual-content p {
+    max-width: 500px;
+
+    font-size: 18px;
+
+    line-height: 1.7;
+
+    color: rgba(255,255,255,0.9);
+
+    margin-bottom: 45px;
+}
+
+
+/* =========================================
+   IMPACT STATS
+========================================= */
+
+.impact-row {
+    display: flex;
+
+    gap: 45px;
+}
+
+
+.impact-row div {
+    display: flex;
+
+    flex-direction: column;
+}
+
+
+.impact-row strong {
+    font-size: 28px;
+
+    color: white;
+}
+
+
+.impact-row span {
+    font-size: 13px;
+
+    color: #d1e8d8;
+
+    margin-top: 2px;
+}
+
+
+/* =========================================
+   RIGHT SIDE
+========================================= */
+
+.login-form-section {
+    min-height: calc(100vh - 75px);
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 50px 30px;
+}
+
+
+.login-card {
+    width: 100%;
+
+    max-width: 450px;
+
+    background: white;
+
+    padding: 45px;
+
+    border-radius: 28px;
+
+    box-shadow:
+        0 20px 60px rgba(25, 75, 40, 0.12);
+}
+
+
+/* =========================================
+   HEADING
+========================================= */
+
+.login-heading {
+    text-align: center;
+
+    margin-bottom: 35px;
+}
+
+
+.login-icon {
+    width: 65px;
+    height: 65px;
+
+    margin: 0 auto 18px;
+
+    border-radius: 20px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    background: #eaf8ee;
+
+    font-size: 30px;
+}
+
+
+.login-heading > span {
+    display: block;
+
+    color: #168447;
+
+    font-size: 11px;
+
+    font-weight: 800;
+
+    letter-spacing: 3px;
+
+    margin-bottom: 8px;
+}
+
+
+.login-heading h2 {
+    font-size: 34px;
+
+    color: #173b25;
+
+    margin-bottom: 8px;
+}
+
+
+.login-heading p {
+    color: #718176;
+
+    font-size: 14px;
+}
+
+
+/* =========================================
+   INPUTS
+========================================= */
+
+.input-group {
+    margin-bottom: 22px;
+}
+
+
+.input-group label {
+    display: block;
+
+    font-size: 13px;
+
+    font-weight: 700;
+
+    color: #31533c;
+
+    margin-bottom: 8px;
+}
+
+
+.input-group input {
+    width: 100%;
+
+    height: 52px;
+
+    border: 1px solid #dce9df;
+
+    border-radius: 12px;
+
+    padding: 0 16px;
+
+    font-size: 14px;
+
+    color: #173b25;
+
+    background: #fbfdfb;
+
+    outline: none;
+
+    transition: 0.25s;
+}
+
+
+.input-group input:focus {
+    border-color: #168447;
+
+    background: white;
+
+    box-shadow:
+        0 0 0 4px rgba(22,132,71,0.08);
+}
+
+
+.input-group input::placeholder {
+    color: #a2afa6;
+}
+
+
+/* =========================================
+   PASSWORD
+========================================= */
+
+.password-wrapper {
+    position: relative;
+}
+
+
+.password-wrapper input {
+    padding-right: 50px;
+}
+
+
+.password-toggle {
+    position: absolute;
+
+    right: 12px;
+
+    top: 50%;
+
+    transform: translateY(-50%);
+
+    border: none;
+
+    background: transparent;
+
+    cursor: pointer;
+
+    font-size: 18px;
+
+    opacity: 0.6;
+}
+
+
+.password-toggle:hover {
+    opacity: 1;
+}
+
+
+/* =========================================
+   MESSAGE
+========================================= */
+
+.form-message {
+    min-height: 22px;
+
+    text-align: center;
+
+    font-size: 13px;
+
+    font-weight: 600;
+
+    margin-bottom: 10px;
+}
+
+
+.form-message.error {
+    color: #d64545;
+}
+
+
+.form-message.success {
+    color: #168447;
+}
+
+
+/* =========================================
+   LOGIN BUTTON
+========================================= */
+
+.login-submit {
+    width: 100%;
+
+    height: 54px;
+
+    border: none;
+
+    border-radius: 13px;
+
+    background: #168447;
+
+    color: white;
+
+    font-size: 15px;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 10px;
+
+    transition: 0.3s;
+}
+
+
+.login-submit:hover {
+    background: #106b38;
+
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 10px 25px rgba(22,132,71,0.25);
+}
+
+
+.login-submit:disabled {
+    opacity: 0.7;
+
+    cursor: not-allowed;
+
+    transform: none;
+}
+
+
+.login-submit span {
+    font-size: 20px;
+}
+
+
+/* =========================================
+   DIVIDER
+========================================= */
+
+.login-divider {
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    margin: 30px 0 20px;
+}
+
+
+.login-divider::before,
+.login-divider::after {
+    content: "";
+
+    flex: 1;
+
+    height: 1px;
+
+    background: #e5eee7;
+}
+
+
+.login-divider span {
+    color: #9aa79f;
+
+    font-size: 9px;
+
+    font-weight: 700;
+
+    letter-spacing: 1.5px;
+
+    white-space: nowrap;
+}
+
+
+/* =========================================
+   CREATE ACCOUNT
+========================================= */
+
+.create-account {
+    display: block;
+
+    width: 100%;
+
+    text-align: center;
+
+    text-decoration: none;
+
+    padding: 13px;
+
+    border: 1px solid #168447;
+
+    border-radius: 12px;
+
+    color: #168447;
+
+    font-size: 14px;
+
+    font-weight: 700;
+
+    transition: 0.3s;
+}
+
+
+.create-account:hover {
+    background: #edf9f0;
+}
+
+
+/* =========================================
+   FOOTER TEXT
+========================================= */
+
+.login-footer {
+    text-align: center;
+
+    color: #9aa79f;
+
+    font-size: 11px;
+
+    line-height: 1.6;
+
+    margin-top: 25px;
+}
+
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media (max-width: 950px) {
+
+    .login-page {
+        grid-template-columns: 1fr;
+    }
+
+
+    .login-visual {
+        min-height: 430px;
+    }
+
+
+    .visual-overlay {
+        padding: 60px 8%;
+    }
+
+
+    .login-form-section {
+        min-height: auto;
+
+        padding: 60px 25px;
+    }
+
+}
+
+
+@media (max-width: 600px) {
+
+    .login-visual {
+        min-height: 380px;
+    }
+
+
+    .visual-content h1 {
+        font-size: 43px;
+    }
+
+
+    .visual-content p {
+        font-size: 15px;
+    }
+
+
+    .impact-row {
+        gap: 25px;
+    }
+
+
+    .impact-row strong {
+        font-size: 22px;
+    }
+
+
+    .login-card {
+        padding: 30px 22px;
+
+        border-radius: 20px;
+    }
+
+
+    .login-heading h2 {
+        font-size: 28px;
+    }
+
+}
+/* =========================================
+   LOGIN LOGO
+========================================= */
+
+.login-logo {
+    display: inline-block;
+
+    color: white;
+
+    text-decoration: none;
+
+    font-size: 22px;
+
+    font-weight: 800;
+
+    margin-bottom: 55px;
+
+    transition: 0.3s;
+}
+
+.login-logo:hover {
+    color: #a8f5bc;
+}
+
+
+/* =========================================
+   BACK HOME
+========================================= */
+
+.back-home {
+    display: block;
+
+    text-align: center;
+
+    margin-top: 18px;
+
+    color: #718176;
+
+    text-decoration: none;
+
+    font-size: 12px;
+
+    font-weight: 600;
+
+    transition: 0.3s;
+}
+
+.back-home:hover {
+    color: #168447;
+}

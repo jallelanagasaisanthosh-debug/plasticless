@@ -1,0 +1,444 @@
+/* ============================================================
+   PLASTICLESS FINAL NAVBAR
+   DO NOT USE .navbar HERE
+============================================================ */
+
+
+/* ROOT */
+
+.plastic-navbar-root {
+    display: block !important;
+
+    width: 100% !important;
+
+    margin: 0 !important;
+
+    padding: 0 !important;
+
+    position: relative !important;
+
+    z-index: 99999 !important;
+}
+
+
+/* ============================================================
+   NAVBAR
+============================================================ */
+
+.plastic-navbar {
+
+    width: 100%;
+
+    height: 76px;
+
+    background: #ffffff;
+
+    border-bottom: 1px solid #e5eee8;
+
+    box-shadow:
+        0 3px 16px rgba(0, 0, 0, 0.07);
+
+    position: sticky;
+
+    top: 0;
+
+    z-index: 99999;
+}
+
+
+/* ============================================================
+   INNER
+============================================================ */
+
+.plastic-navbar-inner {
+
+    width: 100%;
+
+    max-width: 1600px;
+
+    height: 76px;
+
+    margin: 0 auto;
+
+    padding: 0 28px;
+
+    display: flex;
+
+    align-items: center;
+
+}
+
+
+/* ============================================================
+   LOGO
+============================================================ */
+
+.plastic-logo {
+
+    width: 205px;
+
+    min-width: 205px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    text-decoration: none;
+
+    color: #17452a;
+
+    font-size: 22px;
+
+    font-weight: 800;
+
+    white-space: nowrap;
+}
+
+
+.plastic-logo-icon {
+
+    font-size: 26px;
+
+    line-height: 1;
+}
+
+
+/* ============================================================
+   NAVIGATION
+
+   EVERY ITEM GETS EQUAL SPACE
+============================================================ */
+
+.plastic-nav {
+
+    flex: 1;
+
+    height: 100%;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 4px;
+}
+
+
+/* ============================================================
+   EVERY NAV ITEM
+============================================================ */
+
+.plastic-nav .pn-link {
+
+    flex: 1;
+
+    min-width: 0;
+
+    height: 42px;
+
+    padding: 0 7px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 10px;
+
+    text-decoration: none;
+
+    color: #26392d;
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    white-space: nowrap;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        transform 0.2s ease;
+}
+
+
+/* ============================================================
+   HOVER
+============================================================ */
+
+.plastic-nav .pn-link:hover {
+
+    background: #edf8f0;
+
+    color: #15803d;
+
+    transform: translateY(-1px);
+}
+
+
+/* ============================================================
+   ACTIVE
+============================================================ */
+
+.plastic-nav .pn-link.active {
+
+    background: #d9f5e1;
+
+    color: #15803d;
+
+    font-weight: 700;
+}
+
+
+/* ============================================================
+   JOIN NOW
+============================================================ */
+
+.plastic-nav .pn-join {
+
+    background: #16a34a;
+
+    color: #ffffff;
+
+    font-weight: 700;
+}
+
+
+.plastic-nav .pn-join:hover {
+
+    background: #15803d;
+
+    color: #ffffff;
+}
+
+
+/* ============================================================
+   MOBILE BUTTON
+============================================================ */
+
+.plastic-mobile-button {
+
+    display: none;
+
+    border: none;
+
+    background: #edf8f0;
+
+    color: #166534;
+
+    width: 42px;
+
+    height: 42px;
+
+    border-radius: 10px;
+
+    font-size: 23px;
+
+    cursor: pointer;
+}
+
+
+/* ============================================================
+   LARGE DESKTOP
+============================================================ */
+
+@media (min-width: 1400px) {
+
+    .plastic-navbar-inner {
+
+        padding-left: 35px;
+
+        padding-right: 35px;
+    }
+
+
+    .plastic-logo {
+
+        width: 220px;
+
+        min-width: 220px;
+    }
+
+
+    .plastic-nav {
+
+        gap: 8px;
+    }
+
+
+    .plastic-nav .pn-link {
+
+        font-size: 15px;
+    }
+
+}
+
+
+/* ============================================================
+   MEDIUM DESKTOP
+============================================================ */
+
+@media (max-width: 1200px) {
+
+    .plastic-navbar-inner {
+
+        padding-left: 18px;
+
+        padding-right: 18px;
+    }
+
+
+    .plastic-logo {
+
+        width: 175px;
+
+        min-width: 175px;
+
+        font-size: 19px;
+    }
+
+
+    .plastic-logo-icon {
+
+        font-size: 23px;
+    }
+
+
+    .plastic-nav .pn-link {
+
+        font-size: 12px;
+
+        padding-left: 4px;
+
+        padding-right: 4px;
+    }
+
+}
+
+
+/* ============================================================
+   TABLET
+============================================================ */
+
+@media (max-width: 950px) {
+
+    .plastic-navbar {
+
+        height: 68px;
+    }
+
+
+    .plastic-navbar-inner {
+
+        height: 68px;
+
+        padding: 0 18px;
+
+        justify-content: space-between;
+    }
+
+
+    .plastic-logo {
+
+        width: auto;
+
+        min-width: auto;
+
+        font-size: 20px;
+    }
+
+
+    .plastic-mobile-button {
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: center;
+    }
+
+
+    .plastic-nav {
+
+        display: none;
+
+        position: absolute;
+
+        top: 68px;
+
+        left: 0;
+
+        width: 100%;
+
+        height: auto;
+
+        padding: 12px;
+
+        background: #ffffff;
+
+        border-bottom: 1px solid #e4eee7;
+
+        box-shadow:
+            0 10px 25px rgba(0,0,0,0.08);
+
+        flex-direction: column;
+
+        gap: 5px;
+    }
+
+
+    .plastic-nav.plastic-mobile-open {
+
+        display: flex;
+    }
+
+
+    .plastic-nav .pn-link {
+
+        width: 100%;
+
+        flex: none;
+
+        justify-content: flex-start;
+
+        padding: 13px 16px;
+
+        font-size: 15px;
+    }
+
+}
+
+
+/* ============================================================
+   SMALL MOBILE
+============================================================ */
+
+@media (max-width: 480px) {
+
+    .plastic-navbar-inner {
+
+        padding: 0 14px;
+    }
+
+
+    .plastic-logo {
+
+        font-size: 18px;
+    }
+
+
+    .plastic-logo-icon {
+
+        font-size: 21px;
+    }
+
+}

@@ -1,0 +1,925 @@
+/* =========================================================
+   PLASTICLESS RESOURCES PAGE
+   MODERN ECO DESIGN
+========================================================= */
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    background: #f5faf7;
+    color: #173c2a;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+
+/* =========================================================
+   HERO
+========================================================= */
+
+.resources-hero {
+    position: relative;
+
+    min-height: 440px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    overflow: hidden;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(4, 82, 46, 0.96),
+            rgba(10, 137, 76, 0.88)
+        );
+
+    color: white;
+}
+
+
+/* decorative circles */
+
+.resources-hero::before {
+    content: "";
+
+    position: absolute;
+
+    width: 420px;
+    height: 420px;
+
+    border-radius: 50%;
+
+    background: rgba(255,255,255,0.07);
+
+    top: -180px;
+    left: -120px;
+}
+
+.resources-hero::after {
+    content: "";
+
+    position: absolute;
+
+    width: 500px;
+    height: 500px;
+
+    border-radius: 50%;
+
+    background: rgba(255,255,255,0.06);
+
+    right: -180px;
+    bottom: -250px;
+}
+
+
+/* =========================================================
+   HERO DECORATIONS
+========================================================= */
+
+.hero-decoration {
+    position: absolute;
+
+    font-size: 55px;
+
+    opacity: 0.35;
+
+    animation: floating 5s ease-in-out infinite;
+}
+
+.decoration-one {
+    left: 10%;
+    top: 25%;
+}
+
+.decoration-two {
+    right: 11%;
+    bottom: 25%;
+    animation-delay: 1.5s;
+}
+
+
+@keyframes floating {
+
+    0% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-18px);
+    }
+
+    100% {
+        transform: translateY(0);
+    }
+}
+
+
+/* =========================================================
+   HERO CONTENT
+========================================================= */
+
+.hero-content {
+    position: relative;
+
+    z-index: 2;
+
+    width: min(900px, 90%);
+
+    text-align: center;
+
+    padding: 70px 20px;
+}
+
+
+.hero-badge {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 9px 18px;
+
+    margin-bottom: 22px;
+
+    border-radius: 50px;
+
+    background: rgba(255,255,255,0.13);
+
+    border: 1px solid rgba(255,255,255,0.25);
+
+    backdrop-filter: blur(10px);
+
+    font-size: 13px;
+
+    font-weight: 800;
+
+    letter-spacing: 1.5px;
+}
+
+
+.resources-hero h1 {
+    margin: 0 auto 20px;
+
+    max-width: 850px;
+
+    font-size: clamp(42px, 6vw, 72px);
+
+    line-height: 1.05;
+
+    font-weight: 800;
+
+    letter-spacing: -2px;
+}
+
+
+.resources-hero h1 span {
+    color: #b7f7cf;
+
+    display: inline-block;
+}
+
+
+.resources-hero p {
+    max-width: 680px;
+
+    margin: 0 auto;
+
+    color: rgba(255,255,255,0.88);
+
+    font-size: 17px;
+
+    line-height: 1.8;
+}
+
+
+/* =========================================================
+   INTRO
+========================================================= */
+
+.resources-intro {
+    max-width: 850px;
+
+    margin: 0 auto;
+
+    padding: 85px 25px 55px;
+
+    text-align: center;
+}
+
+
+.section-label {
+    display: inline-block;
+
+    color: #159447;
+
+    font-size: 12px;
+
+    font-weight: 900;
+
+    letter-spacing: 2px;
+
+    margin-bottom: 12px;
+}
+
+
+.resources-intro h2 {
+    margin: 0 0 15px;
+
+    color: #123d29;
+
+    font-size: clamp(30px, 4vw, 46px);
+
+    line-height: 1.15;
+}
+
+
+.resources-intro p {
+    margin: 0 auto;
+
+    max-width: 700px;
+
+    color: #668073;
+
+    font-size: 16px;
+
+    line-height: 1.8;
+}
+
+
+/* =========================================================
+   RESOURCE SECTION
+========================================================= */
+
+.resource-section {
+    max-width: 1250px;
+
+    margin: 0 auto;
+
+    padding: 20px 25px 90px;
+}
+
+
+.resource-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, minmax(0, 1fr));
+
+    gap: 24px;
+}
+
+
+/* =========================================================
+   RESOURCE CARD
+========================================================= */
+
+.resource-card {
+    position: relative;
+
+    min-height: 330px;
+
+    padding: 30px;
+
+    background: #ffffff;
+
+    border: 1px solid #e0eee6;
+
+    border-radius: 24px;
+
+    overflow: hidden;
+
+    box-shadow:
+        0 10px 35px rgba(24, 75, 49, 0.07);
+
+    transition:
+        transform 0.3s ease,
+        box-shadow 0.3s ease,
+        border-color 0.3s ease;
+}
+
+
+.resource-card::after {
+    content: "";
+
+    position: absolute;
+
+    width: 130px;
+    height: 130px;
+
+    border-radius: 50%;
+
+    background: #eefaf2;
+
+    right: -55px;
+    top: -55px;
+
+    transition: 0.3s ease;
+}
+
+
+.resource-card:hover {
+    transform: translateY(-8px);
+
+    border-color: #bce4ca;
+
+    box-shadow:
+        0 22px 50px rgba(24, 75, 49, 0.13);
+}
+
+
+.resource-card:hover::after {
+    transform: scale(1.25);
+}
+
+
+/* =========================================================
+   RESOURCE ICON
+========================================================= */
+
+.resource-icon {
+    position: relative;
+
+    z-index: 2;
+
+    width: 68px;
+    height: 68px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 20px;
+
+    font-size: 34px;
+
+    margin-bottom: 25px;
+
+    box-shadow:
+        0 8px 20px rgba(0,0,0,0.06);
+}
+
+
+/* icon colors */
+
+.resource-icon.green {
+    background: #e5f8ec;
+}
+
+.resource-icon.blue {
+    background: #e6f4ff;
+}
+
+.resource-icon.purple {
+    background: #f1eaff;
+}
+
+.resource-icon.orange {
+    background: #fff0df;
+}
+
+.resource-icon.pink {
+    background: #ffe9f1;
+}
+
+.resource-icon.teal {
+    background: #e1f8f4;
+}
+
+
+/* =========================================================
+   RESOURCE CONTENT
+========================================================= */
+
+.resource-content {
+    position: relative;
+
+    z-index: 2;
+}
+
+
+.resource-category {
+    display: inline-block;
+
+    padding: 6px 10px;
+
+    margin-bottom: 12px;
+
+    border-radius: 50px;
+
+    background: #effaf3;
+
+    color: #15803d;
+
+    font-size: 10px;
+
+    font-weight: 900;
+
+    letter-spacing: 1px;
+}
+
+
+.resource-content h3 {
+    margin: 0 0 12px;
+
+    color: #173d2b;
+
+    font-size: 22px;
+
+    line-height: 1.3;
+}
+
+
+.resource-content p {
+    margin: 0 0 24px;
+
+    color: #71857a;
+
+    font-size: 14px;
+
+    line-height: 1.7;
+}
+
+
+/* =========================================================
+   LEARN MORE BUTTON
+========================================================= */
+
+.resource-button {
+    border: none;
+
+    padding: 11px 17px;
+
+    border-radius: 10px;
+
+    background: #138a4b;
+
+    color: white;
+
+    font-size: 12px;
+
+    font-weight: 800;
+
+    letter-spacing: 0.5px;
+
+    cursor: pointer;
+
+    transition: 0.25s ease;
+}
+
+
+.resource-button:hover {
+    background: #096b38;
+
+    transform: translateX(4px);
+
+    box-shadow:
+        0 7px 18px rgba(19,138,75,0.25);
+}
+
+
+/* =========================================================
+   QUICK TIPS
+========================================================= */
+
+.tips-section {
+    padding: 95px 25px;
+
+    background:
+        linear-gradient(
+            180deg,
+            #edf8f1,
+            #f7fcf9
+        );
+}
+
+
+.tips-heading {
+    max-width: 800px;
+
+    margin: 0 auto 45px;
+
+    text-align: center;
+}
+
+
+.tips-heading h2 {
+    margin: 0 0 15px;
+
+    color: #123d29;
+
+    font-size: clamp(30px, 4vw, 44px);
+}
+
+
+.tips-heading p {
+    margin: 0;
+
+    color: #6b8074;
+
+    line-height: 1.8;
+
+    font-size: 16px;
+}
+
+
+/* =========================================================
+   TIPS GRID
+========================================================= */
+
+.tips-grid {
+    max-width: 1250px;
+
+    margin: 0 auto;
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, minmax(0, 1fr));
+
+    gap: 20px;
+}
+
+
+.tip-card {
+    position: relative;
+
+    padding: 28px;
+
+    background: #ffffff;
+
+    border: 1px solid #deeee4;
+
+    border-radius: 22px;
+
+    cursor: pointer;
+
+    overflow: hidden;
+
+    transition:
+        transform 0.3s ease,
+        box-shadow 0.3s ease;
+}
+
+
+.tip-card::before {
+    content: "";
+
+    position: absolute;
+
+    width: 90px;
+    height: 90px;
+
+    border-radius: 50%;
+
+    background: #effaf3;
+
+    right: -35px;
+    top: -35px;
+}
+
+
+.tip-card:hover {
+    transform: translateY(-7px);
+
+    box-shadow:
+        0 18px 40px rgba(20,80,45,0.11);
+}
+
+
+.tip-icon {
+    position: relative;
+
+    z-index: 2;
+
+    width: 58px;
+    height: 58px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    background: #e8f8ee;
+
+    border-radius: 17px;
+
+    font-size: 29px;
+
+    margin-bottom: 20px;
+}
+
+
+.tip-card h3 {
+    position: relative;
+
+    z-index: 2;
+
+    margin: 0 0 10px;
+
+    color: #173d2b;
+
+    font-size: 18px;
+
+    line-height: 1.35;
+}
+
+
+.tip-card p {
+    position: relative;
+
+    z-index: 2;
+
+    margin: 0 0 20px;
+
+    color: #74867c;
+
+    font-size: 13px;
+
+    line-height: 1.7;
+}
+
+
+.tip-link {
+    position: relative;
+
+    z-index: 2;
+
+    color: #15803d;
+
+    font-size: 11px;
+
+    font-weight: 900;
+
+    letter-spacing: 0.7px;
+
+    transition: 0.2s ease;
+}
+
+
+.tip-card:hover .tip-link {
+    letter-spacing: 1.3px;
+}
+
+
+/* =========================================================
+   CTA
+========================================================= */
+
+.resources-cta {
+    position: relative;
+
+    max-width: 1250px;
+
+    min-height: 270px;
+
+    margin: 80px auto;
+
+    padding: 50px 70px;
+
+    border-radius: 30px;
+
+    overflow: hidden;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    background:
+        linear-gradient(
+            135deg,
+            #0b6335,
+            #159447
+        );
+
+    color: white;
+
+    box-shadow:
+        0 20px 55px rgba(14, 94, 51, 0.18);
+}
+
+
+.resources-cta::before {
+    content: "";
+
+    position: absolute;
+
+    width: 300px;
+    height: 300px;
+
+    border-radius: 50%;
+
+    background: rgba(255,255,255,0.07);
+
+    right: -100px;
+    top: -130px;
+}
+
+
+.cta-content {
+    position: relative;
+
+    z-index: 2;
+
+    max-width: 750px;
+}
+
+
+.cta-small {
+    font-size: 11px;
+
+    font-weight: 900;
+
+    letter-spacing: 2px;
+
+    margin-bottom: 12px;
+
+    color: #c9f6d8;
+}
+
+
+.resources-cta h2 {
+    margin: 0 0 12px;
+
+    font-size: 36px;
+}
+
+
+.resources-cta p {
+    margin: 0 0 25px;
+
+    color: rgba(255,255,255,0.82);
+
+    line-height: 1.7;
+}
+
+
+.cta-button {
+    display: inline-block;
+
+    padding: 13px 22px;
+
+    border-radius: 10px;
+
+    background: white;
+
+    color: #126f3c;
+
+    text-decoration: none;
+
+    font-size: 12px;
+
+    font-weight: 900;
+
+    transition: 0.25s ease;
+}
+
+
+.cta-button:hover {
+    transform: translateY(-3px);
+
+    box-shadow:
+        0 10px 25px rgba(0,0,0,0.15);
+}
+
+
+.cta-icon {
+    position: relative;
+
+    z-index: 2;
+
+    width: 130px;
+    height: 130px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: rgba(255,255,255,0.12);
+
+    font-size: 65px;
+}
+
+
+/* =========================================================
+   FOOTER
+========================================================= */
+
+.footer {
+    margin-top: 0;
+}
+
+
+/* =========================================================
+   POPUP
+========================================================= */
+
+.resource-modal {
+    z-index: 99999;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 1050px) {
+
+    .resource-grid {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+    .tips-grid {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+    .resources-cta {
+        margin-left: 25px;
+        margin-right: 25px;
+    }
+
+}
+
+
+@media (max-width: 700px) {
+
+    .resources-hero {
+        min-height: 390px;
+    }
+
+    .resources-hero h1 {
+        font-size: 40px;
+
+        letter-spacing: -1px;
+    }
+
+    .resources-hero p {
+        font-size: 15px;
+    }
+
+    .resource-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .tips-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .resource-card {
+        min-height: auto;
+    }
+
+    .resources-cta {
+        flex-direction: column;
+
+        align-items: flex-start;
+
+        padding: 40px 30px;
+    }
+
+    .cta-icon {
+        display: none;
+    }
+
+}
+
+
+@media (max-width: 480px) {
+
+    .resources-intro {
+        padding-top: 60px;
+    }
+
+    .resource-section {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+
+    .resource-card {
+        padding: 24px;
+
+        border-radius: 20px;
+    }
+
+    .tips-section {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+
+    .resources-cta {
+        margin-left: 15px;
+        margin-right: 15px;
+    }
+
+}

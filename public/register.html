@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Register | PlasticLess</title>
+
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/register.css">
+</head>
+
+<body>
+
+    <div class="register-page">
+
+        <!-- LEFT SIDE -->
+        <div class="register-visual">
+
+            <div class="visual-overlay"></div>
+
+            <div class="visual-content">
+
+                <a href="index.html" class="visual-logo">
+                    🌿 <span>PlasticLess</span>
+                </a>
+
+                <div class="visual-text">
+
+                    <span class="small-title">
+                        JOIN THE MOVEMENT
+                    </span>
+
+                    <h1>
+                        Together, We Can
+                        <span>Make Plastic History.</span>
+                    </h1>
+
+                    <p>
+                        Join thousands of people working together
+                        to reduce plastic pollution and create a
+                        cleaner, greener future.
+                    </p>
+
+                    <div class="visual-points">
+
+                        <div>
+                            <span>✓</span>
+                            Take meaningful plastic-free actions
+                        </div>
+
+                        <div>
+                            <span>✓</span>
+                            Join cleanup campaigns
+                        </div>
+
+                        <div>
+                            <span>✓</span>
+                            Complete environmental challenges
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- RIGHT SIDE -->
+        <div class="register-form-section">
+
+            <div class="register-container">
+
+                <!-- MOBILE / TOP LOGO -->
+
+                <a href="index.html" class="mobile-logo">
+                    🌿 <span>PlasticLess</span>
+                </a>
+
+
+                <div class="form-header">
+
+                    <span class="form-label">
+                        CREATE ACCOUNT
+                    </span>
+
+                    <h2>
+                        Join PlasticLess
+                    </h2>
+
+                    <p>
+                        Create your account and start making
+                        a difference today.
+                    </p>
+
+                </div>
+
+
+                <!-- REGISTER FORM -->
+
+                <form
+                    id="registerForm"
+                    autocomplete="new-password"
+                >
+
+                    <!-- NAME -->
+
+                    <div class="input-group">
+
+                        <label for="name">
+                            Full Name
+                        </label>
+
+                        <div class="input-wrapper">
+
+                            <span class="input-icon">
+                                👤
+                            </span>
+
+                            <input
+                                type="text"
+                                id="name"
+                                name="register_name"
+                                placeholder="Enter your full name"
+                                autocomplete="new-password"
+                                autocorrect="off"
+                                autocapitalize="words"
+                                spellcheck="false"
+                                required
+                            >
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- EMAIL -->
+
+                    <div class="input-group">
+
+                        <label for="email">
+                            Email Address
+                        </label>
+
+                        <div class="input-wrapper">
+
+                            <span class="input-icon">
+                                ✉️
+                            </span>
+
+                            <input
+                                type="email"
+                                id="email"
+                                name="register_email"
+                                placeholder="Enter your email"
+                                autocomplete="new-password"
+                                autocorrect="off"
+                                autocapitalize="none"
+                                spellcheck="false"
+                                value=""
+                                required
+                            >
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- PASSWORD -->
+
+                    <div class="input-group">
+
+                        <label for="password">
+                            Password
+                        </label>
+
+                        <div class="input-wrapper">
+
+                            <span class="input-icon">
+                                🔒
+                            </span>
+
+                            <input
+                                type="password"
+                                id="password"
+                                name="register_password"
+                                placeholder="Create a password"
+                                autocomplete="new-password"
+                                value=""
+                                required
+                            >
+
+                            <button
+                                type="button"
+                                class="password-toggle"
+                                id="togglePassword"
+                                aria-label="Show password"
+                            >
+                                👁
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- CONFIRM PASSWORD -->
+
+                    <div class="input-group">
+
+                        <label for="confirmPassword">
+                            Confirm Password
+                        </label>
+
+                        <div class="input-wrapper">
+
+                            <span class="input-icon">
+                                🔐
+                            </span>
+
+                            <input
+                                type="password"
+                                id="confirmPassword"
+                                name="register_confirm_password"
+                                placeholder="Confirm your password"
+                                autocomplete="new-password"
+                                value=""
+                                required
+                            >
+
+                            <button
+                                type="button"
+                                class="password-toggle"
+                                id="toggleConfirmPassword"
+                                aria-label="Show confirm password"
+                            >
+                                👁
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- ROLE -->
+
+                    <div class="input-group">
+
+                        <label for="role">
+                            Account Type
+                        </label>
+
+                        <div class="input-wrapper select-wrapper">
+
+                            <span class="input-icon">
+                                🌱
+                            </span>
+
+                            <select
+                                id="role"
+                                name="role"
+                                autocomplete="off"
+                                required
+                            >
+
+                                <option value="">
+                                    Select account type
+                                </option>
+
+                                <option value="citizen">
+                                    Citizen
+                                </option>
+
+                                <option value="volunteer">
+                                    Volunteer
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- MESSAGE -->
+
+                    <div
+                        id="registerMessage"
+                        class="form-message"
+                    ></div>
+
+
+                    <!-- REGISTER BUTTON -->
+
+                    <button
+                        type="submit"
+                        class="register-submit"
+                        id="registerBtn"
+                    >
+                        Create Account
+                        <span>→</span>
+                    </button>
+
+                </form>
+
+
+                <!-- LOGIN -->
+
+                <div class="login-link">
+
+                    Already have an account?
+
+                    <a href="login.html">
+                        Login
+                    </a>
+
+                </div>
+
+
+                <!-- BACK HOME -->
+
+                <a href="index.html" class="back-home">
+                    ← Back to Home
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <script src="js/register.js"></script>
+
+
+    <!-- PREVENT BROWSER AUTOFILL -->
+
+    <script>
+
+        /*
+         * Clear registration fields when the page loads.
+         * This prevents previously entered registration
+         * information from being reused automatically.
+         */
+
+        window.addEventListener("load", function () {
+
+            const fields = [
+                "name",
+                "email",
+                "password",
+                "confirmPassword"
+            ];
+
+            fields.forEach(function (id) {
+
+                const field =
+                    document.getElementById(id);
+
+                if (field) {
+                    field.value = "";
+                }
+
+            });
+
+        });
+
+
+        /*
+         * Prevent browser autofill from restoring
+         * old registration values after page load.
+         */
+
+        window.addEventListener("pageshow", function () {
+
+            const fields = [
+                "name",
+                "email",
+                "password",
+                "confirmPassword"
+            ];
+
+            fields.forEach(function (id) {
+
+                const field =
+                    document.getElementById(id);
+
+                if (field) {
+                    field.value = "";
+                }
+
+            });
+
+        });
+
+    </script>
+
+</body>
+</html>

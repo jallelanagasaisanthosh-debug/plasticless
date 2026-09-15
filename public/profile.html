@@ -1,0 +1,1005 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>My Profile | PlasticLess</title>
+
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/navbar.css">
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f5faf7;
+            color: #173b27;
+        }
+
+        /* HERO */
+
+        .profile-hero {
+            padding: 70px 20px;
+            text-align: center;
+            color: white;
+
+            background:
+                linear-gradient(
+                    rgba(10, 70, 35, 0.22),
+                    rgba(10, 70, 35, 0.22)
+                ),
+                url("/images/profile-bg.png");
+
+            background-size: cover;
+            background-position: center;
+        }
+
+        .profile-hero h1 {
+            margin: 0 0 12px;
+            font-size: 48px;
+        }
+
+        .profile-hero p {
+            margin: 0;
+            font-size: 18px;
+        }
+
+        /* CONTAINER */
+
+        .profile-container {
+            max-width: 1100px;
+            margin: auto;
+            padding: 55px 5%;
+        }
+
+        /* PROFILE CARD */
+
+        .profile-card {
+            background: white;
+            border-radius: 22px;
+            padding: 35px;
+            box-shadow: 0 10px 30px rgba(20, 83, 45, 0.08);
+            border: 1px solid #dfebe3;
+        }
+
+        .profile-top {
+            display: flex;
+            align-items: center;
+            gap: 22px;
+            padding-bottom: 30px;
+            border-bottom: 1px solid #e5eee8;
+        }
+
+        .profile-icon {
+            width: 90px;
+            height: 90px;
+            flex-shrink: 0;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #dcfce7;
+            font-size: 45px;
+        }
+
+        .profile-top h2 {
+            margin: 0 0 7px;
+            color: #14532d;
+            font-size: 28px;
+        }
+
+        .profile-top p {
+            margin: 0;
+            color: #718278;
+        }
+
+        /* DETAILS */
+
+        .details-title {
+            margin: 30px 0 20px;
+            color: #14532d;
+            font-size: 23px;
+        }
+
+        .details-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 18px;
+        }
+
+        .detail-box {
+            padding: 20px;
+            border-radius: 14px;
+            background: #f7fbf8;
+            border: 1px solid #e2ece5;
+        }
+
+        .detail-label {
+            margin-bottom: 8px;
+            color: #75857b;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .detail-value {
+            color: #14532d;
+            font-size: 17px;
+            font-weight: 800;
+            word-break: break-word;
+        }
+
+        /* STATISTICS */
+
+        .stats-title {
+            margin: 35px 0 20px;
+            color: #14532d;
+            font-size: 23px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 18px;
+        }
+
+        .stat-card {
+            padding: 25px 15px;
+            text-align: center;
+            border-radius: 16px;
+            background: #f0fdf4;
+            border: 1px solid #dcfce7;
+        }
+
+        .stat-icon {
+            font-size: 34px;
+        }
+
+        .stat-number {
+            margin-top: 8px;
+            color: #15803d;
+            font-size: 30px;
+            font-weight: 800;
+        }
+
+        .stat-label {
+            margin-top: 5px;
+            color: #68796e;
+            font-size: 13px;
+        }
+
+        /* ACTIONS */
+
+        .profile-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 35px;
+            padding-top: 30px;
+            border-top: 1px solid #e5eee8;
+        }
+
+        .profile-btn {
+            padding: 13px 22px;
+            border-radius: 10px;
+            border: none;
+            text-decoration: none;
+            font-weight: 800;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .tasks-btn {
+            background: #16a34a;
+            color: white;
+        }
+
+        .campaign-btn {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .logout-btn {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .profile-btn:hover {
+            opacity: 0.88;
+        }
+
+        /* LOADING */
+
+        .loading {
+            text-align: center;
+            padding: 60px;
+            color: #63766a;
+        }
+
+        /* ERROR */
+
+        .error-box {
+            display: none;
+            margin-bottom: 20px;
+            padding: 17px;
+            text-align: center;
+            border-radius: 12px;
+            background: #fee2e2;
+            border: 1px solid #fecaca;
+            color: #991b1b;
+        }
+
+        /* FOOTER */
+
+        footer {
+            padding: 35px 20px;
+            text-align: center;
+            background: #0f2f1c;
+            color: white;
+        }
+
+        footer h2 {
+            margin: 0 0 8px;
+        }
+
+        footer p {
+            margin: 6px 0;
+            color: #b8cfc0;
+        }
+
+        /* MOBILE */
+
+        @media (max-width: 700px) {
+
+            .profile-hero h1 {
+                font-size: 36px;
+            }
+
+            .profile-container {
+                padding: 40px 20px;
+            }
+
+            .profile-card {
+                padding: 25px 20px;
+            }
+
+            .profile-top {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .details-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .profile-actions {
+                flex-direction: column;
+            }
+
+            .profile-btn {
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- COMMON NAVBAR -->
+    <div class="navbar"></div>
+
+
+    <!-- HERO -->
+
+    <section class="profile-hero">
+
+        <h1>
+            My Profile
+        </h1>
+
+        <p>
+            Manage your PlasticLess account and track your impact.
+        </p>
+
+    </section>
+
+
+    <main class="profile-container">
+
+        <div
+            id="errorBox"
+            class="error-box"
+        ></div>
+
+
+        <div
+            id="loading"
+            class="loading"
+        >
+            🌱 Loading profile...
+        </div>
+
+
+        <section
+            id="profileCard"
+            class="profile-card"
+            style="display:none;"
+        >
+
+            <!-- TOP -->
+
+            <div class="profile-top">
+
+                <div class="profile-icon">
+                    👤
+                </div>
+
+                <div>
+
+                    <h2 id="profileName">
+                        Member
+                    </h2>
+
+                    <p id="profileEmail">
+                        Loading...
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- DETAILS -->
+
+            <h3 class="details-title">
+                👤 Account Information
+            </h3>
+
+
+            <div class="details-grid">
+
+                <div class="detail-box">
+
+                    <div class="detail-label">
+                        Full Name
+                    </div>
+
+                    <div
+                        id="fullName"
+                        class="detail-value"
+                    >
+                        —
+                    </div>
+
+                </div>
+
+
+                <div class="detail-box">
+
+                    <div class="detail-label">
+                        Email Address
+                    </div>
+
+                    <div
+                        id="email"
+                        class="detail-value"
+                    >
+                        —
+                    </div>
+
+                </div>
+
+
+                <div class="detail-box">
+
+                    <div class="detail-label">
+                        Account Role
+                    </div>
+
+                    <div
+                        id="role"
+                        class="detail-value"
+                    >
+                        —
+                    </div>
+
+                </div>
+
+
+                <div class="detail-box">
+
+                    <div class="detail-label">
+                        Member Since
+                    </div>
+
+                    <div
+                        id="memberSince"
+                        class="detail-value"
+                    >
+                        —
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- STATISTICS -->
+
+            <h3 class="stats-title">
+                📊 My PlasticLess Impact
+            </h3>
+
+
+            <div class="stats-grid">
+
+                <div class="stat-card">
+
+                    <div class="stat-icon">
+                        ✅
+                    </div>
+
+                    <div
+                        id="tasksCompleted"
+                        class="stat-number"
+                    >
+                        0
+                    </div>
+
+                    <div class="stat-label">
+                        Tasks Completed
+                    </div>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <div class="stat-icon">
+                        ⭐
+                    </div>
+
+                    <div
+                        id="pointsEarned"
+                        class="stat-number"
+                    >
+                        0
+                    </div>
+
+                    <div class="stat-label">
+                        Points Earned
+                    </div>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <div class="stat-icon">
+                        🌍
+                    </div>
+
+                    <div
+                        id="campaignsJoined"
+                        class="stat-number"
+                    >
+                        0
+                    </div>
+
+                    <div class="stat-label">
+                        Campaigns Joined
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ACTIONS -->
+
+            <div class="profile-actions">
+
+                <a
+                    href="tasks.html"
+                    class="profile-btn tasks-btn"
+                >
+                    🌱 View Tasks
+                </a>
+
+
+                <a
+                    href="campaigns.html"
+                    class="profile-btn campaign-btn"
+                >
+                    🌍 View Campaigns
+                </a>
+
+
+                <button
+                    id="logoutBtn"
+                    class="profile-btn logout-btn"
+                >
+                    🚪 Logout
+                </button>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <footer>
+
+        <h2>
+            PlasticLess 🌿
+        </h2>
+
+        <p>
+            Together for a cleaner and greener future.
+        </p>
+
+        <p>
+            © 2026 PlasticLess. All Rights Reserved.
+        </p>
+
+    </footer>
+
+
+    <!-- NAVBAR -->
+
+    <script src="js/navbar.js"></script>
+
+
+    <script>
+
+        /* =====================================================
+           LOAD PROFILE
+        ===================================================== */
+
+        async function loadProfile() {
+
+            try {
+
+                const response =
+                    await fetch(
+                        "/api/current-user",
+                        {
+                            method: "GET",
+                            credentials: "include",
+                            cache: "no-store"
+                        }
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                console.log(
+                    "PROFILE RESPONSE:",
+                    data
+                );
+
+
+                if (
+                    !response.ok ||
+                    data.success !== true ||
+                    data.loggedIn !== true ||
+                    !data.user
+                ) {
+
+                    window.location.href =
+                        "login.html";
+
+                    return;
+                }
+
+
+                const user =
+                    data.user;
+
+
+                /* ============================
+                   USER DETAILS
+                ============================ */
+
+                const name =
+                    user.name ||
+                    user.full_name ||
+                    user.username ||
+                    "Member";
+
+
+                const email =
+                    user.email ||
+                    "Not provided";
+
+
+                const role =
+                    user.role ||
+                    "citizen";
+
+
+                const created =
+                    user.created_at ||
+                    user.createdAt;
+
+
+                document.getElementById(
+                    "profileName"
+                ).textContent =
+                    name;
+
+
+                document.getElementById(
+                    "profileEmail"
+                ).textContent =
+                    email;
+
+
+                document.getElementById(
+                    "fullName"
+                ).textContent =
+                    name;
+
+
+                document.getElementById(
+                    "email"
+                ).textContent =
+                    email;
+
+
+                document.getElementById(
+                    "role"
+                ).textContent =
+                    role;
+
+
+                document.getElementById(
+                    "memberSince"
+                ).textContent =
+                    formatDate(created);
+
+
+                /* ============================
+                   SHOW PROFILE
+                ============================ */
+
+                document.getElementById(
+                    "loading"
+                ).style.display =
+                    "none";
+
+
+                document.getElementById(
+                    "profileCard"
+                ).style.display =
+                    "block";
+
+
+                /* ============================
+                   LOAD TASKS
+                ============================ */
+
+                await loadTaskProgress();
+
+
+                /* ============================
+                   LOAD CAMPAIGNS
+                ============================ */
+
+                await loadCampaignCount();
+
+
+            } catch (error) {
+
+                console.error(
+                    "Profile error:",
+                    error
+                );
+
+
+                showError(
+                    "Unable to load profile."
+                );
+            }
+        }
+
+
+        /* =====================================================
+           TASK PROGRESS
+        ===================================================== */
+
+        async function loadTaskProgress() {
+
+            try {
+
+                const response =
+                    await fetch(
+                        "/api/tasks/progress",
+                        {
+                            credentials: "include"
+                        }
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                console.log(
+                    "PROFILE TASK RESPONSE:",
+                    data
+                );
+
+
+                const completed =
+                    Number(
+                        data.completed_tasks ??
+                        data.completed ??
+                        0
+                    );
+
+
+                const points =
+                    Number(
+                        data.total_points ??
+                        data.points ??
+                        0
+                    );
+
+
+                document.getElementById(
+                    "tasksCompleted"
+                ).textContent =
+                    completed;
+
+
+                document.getElementById(
+                    "pointsEarned"
+                ).textContent =
+                    points;
+
+
+            } catch (error) {
+
+                console.error(
+                    "Task progress error:",
+                    error
+                );
+
+            }
+
+        }
+
+
+        /* =====================================================
+           CAMPAIGN COUNT
+        ===================================================== */
+
+        async function loadCampaignCount() {
+
+            try {
+
+                const response =
+                    await fetch(
+                        "/api/campaigns",
+                        {
+                            credentials: "include"
+                        }
+                    );
+
+
+                const result =
+                    await response.json();
+
+
+                const campaigns =
+                    Array.isArray(result)
+                        ? result
+                        : (
+                            result.campaigns || []
+                        );
+
+
+                let joinedCount = 0;
+
+
+                for (
+                    const campaign
+                    of campaigns
+                ) {
+
+                    try {
+
+                        const statusResponse =
+                            await fetch(
+                                `/api/campaigns/${campaign.id}/status`,
+                                {
+                                    credentials: "include"
+                                }
+                            );
+
+
+                        if (
+                            statusResponse.ok
+                        ) {
+
+                            const status =
+                                await statusResponse.json();
+
+
+                            if (
+                                status.joined === true
+                            ) {
+
+                                joinedCount++;
+
+                            }
+
+                        }
+
+                    } catch (error) {
+
+                        console.log(
+                            "Campaign status unavailable"
+                        );
+
+                    }
+
+                }
+
+
+                document.getElementById(
+                    "campaignsJoined"
+                ).textContent =
+                    joinedCount;
+
+
+            } catch (error) {
+
+                console.error(
+                    "Campaign count error:",
+                    error
+                );
+
+            }
+
+        }
+
+
+        /* =====================================================
+           LOGOUT
+        ===================================================== */
+
+        document.getElementById(
+            "logoutBtn"
+        ).addEventListener(
+            "click",
+            async function() {
+
+                try {
+
+                    const response =
+                        await fetch(
+                            "/api/logout",
+                            {
+                                method: "POST",
+                                credentials: "include"
+                            }
+                        );
+
+
+                    if (
+                        response.ok
+                    ) {
+
+                        window.location.href =
+                            "index.html";
+
+                    } else {
+
+                        alert(
+                            "Logout failed. Please try again."
+                        );
+
+                    }
+
+                } catch (error) {
+
+                    console.error(
+                        "Logout error:",
+                        error
+                    );
+
+                    alert(
+                        "Unable to logout."
+                    );
+                }
+
+            }
+        );
+
+
+        /* =====================================================
+           DATE
+        ===================================================== */
+
+        function formatDate(value) {
+
+            if (!value) {
+                return "Not available";
+            }
+
+
+            const date =
+                new Date(value);
+
+
+            if (
+                Number.isNaN(
+                    date.getTime()
+                )
+            ) {
+
+                return String(value);
+
+            }
+
+
+            return date.toLocaleDateString(
+                "en-IN",
+                {
+                    day: "2-digit",
+                    month: "short",
+                    year: "numeric"
+                }
+            );
+        }
+
+
+        /* =====================================================
+           ERROR
+        ===================================================== */
+
+        function showError(message) {
+
+            const box =
+                document.getElementById(
+                    "errorBox"
+                );
+
+
+            box.textContent =
+                message;
+
+
+            box.style.display =
+                "block";
+
+
+            document.getElementById(
+                "loading"
+            ).style.display =
+                "none";
+        }
+
+
+        /* =====================================================
+           START
+        ===================================================== */
+
+        loadProfile();
+
+    </script>
+
+</body>
+</html>

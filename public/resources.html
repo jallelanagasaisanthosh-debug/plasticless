@@ -1,0 +1,1513 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Resources | PlasticLess</title>
+
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/navbar.css">
+    <link rel="stylesheet" href="css/resources.css">
+
+    <style>
+        /* =====================================================
+           RESOURCE POPUP FIX
+        ===================================================== */
+
+        .resource-modal {
+            position: fixed;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(5, 35, 20, 0.65);
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            padding: 20px;
+
+            z-index: 99999;
+
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+
+            transition:
+                opacity 0.25s ease,
+                visibility 0.25s ease;
+        }
+
+        .resource-modal.active {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+        }
+
+        .modal-box {
+            position: relative;
+
+            width: min(750px, 95vw);
+            max-height: 88vh;
+
+            overflow-y: auto;
+
+            background: #ffffff;
+
+            border-radius: 24px;
+
+            padding: 38px;
+
+            box-shadow:
+                0 30px 90px rgba(0, 0, 0, 0.30);
+
+            transform: translateY(25px) scale(0.96);
+
+            transition:
+                transform 0.25s ease;
+        }
+
+        .resource-modal.active .modal-box {
+            transform: translateY(0) scale(1);
+        }
+
+        .modal-close {
+            position: absolute;
+
+            top: 15px;
+            right: 18px;
+
+            width: 42px;
+            height: 42px;
+
+            border: none;
+            border-radius: 50%;
+
+            background: #f0fdf4;
+            color: #166534;
+
+            font-size: 30px;
+            line-height: 1;
+
+            cursor: pointer;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            transition: 0.2s ease;
+        }
+
+        .modal-close:hover {
+            background: #dcfce7;
+            transform: rotate(90deg);
+        }
+
+        .modal-icon {
+            width: 72px;
+            height: 72px;
+
+            border-radius: 20px;
+
+            background: #dcfce7;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            font-size: 42px;
+
+            margin-bottom: 18px;
+        }
+
+        .modal-category {
+            color: #16a34a;
+
+            font-size: 12px;
+
+            font-weight: 800;
+
+            letter-spacing: 2px;
+
+            margin-bottom: 8px;
+        }
+
+        #modalTitle {
+            color: #14532d;
+
+            font-size: 30px;
+
+            margin: 0 0 22px;
+
+            padding-right: 45px;
+
+            line-height: 1.25;
+        }
+
+        .modal-text {
+            color: #53675b;
+
+            text-align: left;
+
+            line-height: 1.8;
+
+            font-size: 16px;
+        }
+
+        .modal-text h3 {
+            color: #14532d;
+
+            font-size: 20px;
+
+            margin:
+                22px 0 10px;
+        }
+
+        .modal-text h3:first-child {
+            margin-top: 0;
+        }
+
+        .modal-text p {
+            margin:
+                0 0 15px;
+        }
+
+        .modal-text ul,
+        .modal-text ol {
+            margin:
+                10px 0 20px;
+
+            padding-left: 25px;
+        }
+
+        .modal-text li {
+            margin-bottom: 7px;
+        }
+
+        .theory-tip {
+            margin-top: 22px;
+
+            padding: 16px 18px;
+
+            background: #f0fdf4;
+
+            border-left:
+                4px solid #16a34a;
+
+            border-radius: 12px;
+
+            color: #166534;
+
+            line-height: 1.7;
+        }
+
+        .modal-actions {
+            display: flex;
+
+            gap: 12px;
+
+            margin-top: 28px;
+
+            flex-wrap: wrap;
+        }
+
+        .modal-action-button,
+        .modal-task-button {
+            flex: 1;
+
+            min-width: 180px;
+
+            padding: 13px 20px;
+
+            border-radius: 10px;
+
+            font-size: 14px;
+
+            font-weight: 800;
+
+            text-align: center;
+
+            cursor: pointer;
+
+            text-decoration: none;
+        }
+
+        .modal-action-button {
+            border: none;
+
+            background: #16a34a;
+
+            color: white;
+        }
+
+        .modal-action-button:hover {
+            background: #15803d;
+        }
+
+        .modal-task-button {
+            background: #f0fdf4;
+
+            color: #166534;
+
+            border:
+                1px solid #bbf7d0;
+        }
+
+        .modal-task-button:hover {
+            background: #dcfce7;
+        }
+
+        @media (max-width: 600px) {
+
+            .modal-box {
+                padding: 28px 20px;
+                max-height: 90vh;
+            }
+
+            #modalTitle {
+                font-size: 25px;
+            }
+
+            .modal-text {
+                font-size: 15px;
+            }
+
+            .modal-actions {
+                flex-direction: column;
+            }
+
+            .modal-action-button,
+            .modal-task-button {
+                width: 100%;
+            }
+        }
+    </style>
+
+</head>
+
+<body>
+
+
+    <!-- =========================
+         COMMON NAVBAR
+    ========================= -->
+
+    <div class="navbar"></div>
+
+
+    <!-- =========================
+         HERO
+    ========================= -->
+
+    <section class="resources-hero">
+
+        <div class="hero-decoration decoration-one">
+            ♻️
+        </div>
+
+        <div class="hero-decoration decoration-two">
+            🌱
+        </div>
+
+        <div class="hero-content">
+
+            <div class="hero-badge">
+                📚 LEARN • ACT • INSPIRE
+            </div>
+
+            <h1>
+                Knowledge for a
+                <span>Plastic-Free</span>
+                Future
+            </h1>
+
+            <p>
+                Discover simple ways to reduce plastic,
+                recycle responsibly and inspire others
+                to protect our planet.
+            </p>
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================
+         INTRO
+    ========================= -->
+
+    <section class="resources-intro">
+
+        <div class="section-label">
+            LEARN SOMETHING NEW
+        </div>
+
+        <h2>
+            Small knowledge. Big change.
+        </h2>
+
+        <p>
+            Explore our guides and practical resources to
+            understand plastic pollution and make better
+            everyday choices.
+        </p>
+
+    </section>
+
+
+    <!-- =========================
+         RESOURCES
+    ========================= -->
+
+    <section class="resource-section">
+
+        <div class="resource-grid">
+
+
+            <!-- RESOURCE 1 -->
+
+            <article class="resource-card">
+
+                <div class="resource-icon green">
+                    🌊
+                </div>
+
+                <div class="resource-content">
+
+                    <span class="resource-category">
+                        PLASTIC POLLUTION
+                    </span>
+
+                    <h3>
+                        Understanding Plastic Pollution
+                    </h3>
+
+                    <p>
+                        Understand how plastic waste affects
+                        oceans, wildlife and our communities.
+                    </p>
+
+                    <button
+                        type="button"
+                        class="resource-button"
+                        onclick="openResource('pollution')">
+                        LEARN MORE →
+                    </button>
+
+                </div>
+
+            </article>
+
+
+            <!-- RESOURCE 2 -->
+
+            <article class="resource-card">
+
+                <div class="resource-icon blue">
+                    🛍️
+                </div>
+
+                <div class="resource-content">
+
+                    <span class="resource-category">
+                        REDUCE
+                    </span>
+
+                    <h3>
+                        Reduce Single-Use Plastic
+                    </h3>
+
+                    <p>
+                        Learn practical alternatives to plastic
+                        bags, cups, bottles and containers.
+                    </p>
+
+                    <button
+                        type="button"
+                        class="resource-button"
+                        onclick="openResource('reduce')">
+                        LEARN MORE →
+                    </button>
+
+                </div>
+
+            </article>
+
+
+            <!-- RESOURCE 3 -->
+
+            <article class="resource-card">
+
+                <div class="resource-icon purple">
+                    ♻️
+                </div>
+
+                <div class="resource-content">
+
+                    <span class="resource-category">
+                        RECYCLING
+                    </span>
+
+                    <h3>
+                        How to Recycle Plastic
+                    </h3>
+
+                    <p>
+                        Learn the basic steps for separating
+                        and recycling plastic waste correctly.
+                    </p>
+
+                    <button
+                        type="button"
+                        class="resource-button"
+                        onclick="openResource('recycling')">
+                        LEARN MORE →
+                    </button>
+
+                </div>
+
+            </article>
+
+
+            <!-- RESOURCE 4 -->
+
+            <article class="resource-card">
+
+                <div class="resource-icon orange">
+                    🌍
+                </div>
+
+                <div class="resource-content">
+
+                    <span class="resource-category">
+                        COMMUNITY
+                    </span>
+
+                    <h3>
+                        Community Cleanup Guide
+                    </h3>
+
+                    <p>
+                        Learn how to participate in or organize
+                        a local plastic cleanup campaign.
+                    </p>
+
+                    <button
+                        type="button"
+                        class="resource-button"
+                        onclick="openResource('cleanup')">
+                        LEARN MORE →
+                    </button>
+
+                </div>
+
+            </article>
+
+
+            <!-- RESOURCE 5 -->
+
+            <article class="resource-card">
+
+                <div class="resource-icon pink">
+                    🌱
+                </div>
+
+                <div class="resource-content">
+
+                    <span class="resource-category">
+                        LIFESTYLE
+                    </span>
+
+                    <h3>
+                        Build Sustainable Habits
+                    </h3>
+
+                    <p>
+                        Simple everyday habits can help you
+                        reduce your personal plastic footprint.
+                    </p>
+
+                    <button
+                        type="button"
+                        class="resource-button"
+                        onclick="openResource('habits')">
+                        LEARN MORE →
+                    </button>
+
+                </div>
+
+            </article>
+
+
+            <!-- RESOURCE 6 -->
+
+            <article class="resource-card">
+
+                <div class="resource-icon teal">
+                    🌳
+                </div>
+
+                <div class="resource-content">
+
+                    <span class="resource-category">
+                        ENVIRONMENT
+                    </span>
+
+                    <h3>
+                        Protect Our Green Spaces
+                    </h3>
+
+                    <p>
+                        Discover how reducing plastic waste
+                        helps protect parks, forests and rivers.
+                    </p>
+
+                    <button
+                        type="button"
+                        class="resource-button"
+                        onclick="openResource('environment')">
+                        LEARN MORE →
+                    </button>
+
+                </div>
+
+            </article>
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================
+         QUICK TIPS
+    ========================= -->
+
+    <section class="tips-section">
+
+        <div class="tips-heading">
+
+            <div class="section-label">
+                QUICK TIPS
+            </div>
+
+            <h2>
+                Start with simple changes.
+            </h2>
+
+            <p>
+                You don't have to change everything at once.
+                Start with one small habit today.
+            </p>
+
+        </div>
+
+
+        <div class="tips-grid">
+
+
+            <!-- TIP 1 -->
+
+            <div
+                class="tip-card"
+                onclick="openResource('bags')">
+
+                <div class="tip-icon">
+                    🛍️
+                </div>
+
+                <h3>
+                    Carry Reusable Bags
+                </h3>
+
+                <p>
+                    Keep a reusable cloth or jute bag
+                    with you while shopping.
+                </p>
+
+                <span class="tip-link">
+                    LEARN MORE →
+                </span>
+
+            </div>
+
+
+            <!-- TIP 2 -->
+
+            <div
+                class="tip-card"
+                onclick="openResource('bottle')">
+
+                <div class="tip-icon">
+                    💧
+                </div>
+
+                <h3>
+                    Use a Reusable Bottle
+                </h3>
+
+                <p>
+                    Carry your own bottle instead of
+                    buying single-use plastic bottles.
+                </p>
+
+                <span class="tip-link">
+                    LEARN MORE →
+                </span>
+
+            </div>
+
+
+            <!-- TIP 3 -->
+
+            <div
+                class="tip-card"
+                onclick="openResource('straws')">
+
+                <div class="tip-icon">
+                    🥤
+                </div>
+
+                <h3>
+                    Avoid Plastic Straws
+                </h3>
+
+                <p>
+                    Skip disposable straws or choose
+                    reusable alternatives.
+                </p>
+
+                <span class="tip-link">
+                    LEARN MORE →
+                </span>
+
+            </div>
+
+
+            <!-- TIP 4 -->
+
+            <div
+                class="tip-card"
+                onclick="openResource('recycle')">
+
+                <div class="tip-icon">
+                    ♻️
+                </div>
+
+                <h3>
+                    Recycle Properly
+                </h3>
+
+                <p>
+                    Separate recyclable waste and
+                    dispose of it responsibly.
+                </p>
+
+                <span class="tip-link">
+                    LEARN MORE →
+                </span>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================
+         CTA
+    ========================= -->
+
+    <section class="resources-cta">
+
+        <div class="cta-content">
+
+            <div class="cta-small">
+                READY TO TAKE ACTION?
+            </div>
+
+            <h2>
+                Turn knowledge into action.
+            </h2>
+
+            <p>
+                Complete your PlasticLess tasks and
+                earn points while helping the planet.
+            </p>
+
+            <a
+                href="tasks.html"
+                class="cta-button">
+                VIEW MY TASKS →
+            </a>
+
+        </div>
+
+        <div class="cta-icon">
+            🌱
+        </div>
+
+    </section>
+
+
+    <!-- =========================
+         RESOURCE POPUP
+    ========================= -->
+
+    <div
+        id="resourceModal"
+        class="resource-modal">
+
+        <div
+            class="modal-box"
+            onclick="event.stopPropagation()">
+
+            <button
+                type="button"
+                class="modal-close"
+                onclick="closeResource()"
+                aria-label="Close">
+                ×
+            </button>
+
+            <div
+                id="modalIcon"
+                class="modal-icon">
+                🌱
+            </div>
+
+            <div
+                id="modalCategory"
+                class="modal-category">
+                RESOURCE
+            </div>
+
+            <h2 id="modalTitle">
+                Resource Title
+            </h2>
+
+            <div
+                id="modalContent"
+                class="modal-text">
+            </div>
+
+            <div class="modal-actions">
+
+                <button
+                    type="button"
+                    class="modal-action-button"
+                    onclick="closeResource()">
+                    ✓ GOT IT
+                </button>
+
+                <a
+                    href="tasks.html"
+                    class="modal-task-button">
+                    TAKE A TASK →
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================
+         FOOTER
+    ========================= -->
+
+    <footer class="footer">
+
+        <div class="footer-container">
+
+            <div>
+
+                <h3>
+                    🌿 PlasticLess
+                </h3>
+
+                <p>
+                    Together we can reduce plastic pollution
+                    and build a cleaner, greener future.
+                </p>
+
+            </div>
+
+
+            <div>
+
+                <h3>
+                    Explore
+                </h3>
+
+                <a href="index.html">
+                    Home
+                </a>
+
+                <a href="about.html">
+                    About
+                </a>
+
+                <a href="campaigns.html">
+                    Campaigns
+                </a>
+
+            </div>
+
+
+            <div>
+
+                <h3>
+                    Take Action
+                </h3>
+
+                <a href="tasks.html">
+                    Tasks
+                </a>
+
+                <a href="resources.html">
+                    Resources
+                </a>
+
+                <a href="contact.html">
+                    Contact
+                </a>
+
+            </div>
+
+
+            <div>
+
+                <h3>
+                    Account
+                </h3>
+
+                <a href="dashboard.html">
+                    Dashboard
+                </a>
+
+                <a href="profile.html">
+                    Profile
+                </a>
+
+                <a
+                    href="index.html"
+                    onclick="logoutUser(); return false;">
+                    Logout
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <div class="footer-bottom">
+
+            © 2026 PlasticLess.
+            Together for a plastic-free future. 🌱
+
+        </div>
+
+    </footer>
+
+
+    <!-- =========================
+         INLINE RESOURCE JAVASCRIPT
+         NO EXTERNAL JS DEPENDENCY
+    ========================= -->
+
+    <script>
+
+        /* =====================================================
+           RESOURCE THEORY
+        ===================================================== */
+
+        const resourceData = {
+
+            pollution: {
+                icon: "🌊",
+                category: "PLASTIC POLLUTION",
+                title: "Understanding Plastic Pollution",
+                content: `
+                    <h3>What is Plastic Pollution?</h3>
+
+                    <p>
+                        Plastic pollution occurs when plastic waste
+                        accumulates in the environment and causes
+                        harm to land, water, wildlife and communities.
+                    </p>
+
+                    <h3>Why is Plastic a Problem?</h3>
+
+                    <p>
+                        Plastic is durable and can remain in the
+                        environment for a very long time. Many plastic
+                        products are used for only a short period before
+                        becoming waste.
+                    </p>
+
+                    <ul>
+                        <li>Plastic waste can enter rivers and oceans.</li>
+                        <li>Animals may swallow plastic waste.</li>
+                        <li>Plastic can damage natural habitats.</li>
+                        <li>Plastic waste can spread through ecosystems.</li>
+                    </ul>
+
+                    <h3>What Can We Do?</h3>
+
+                    <p>
+                        Reduce unnecessary plastic use, choose reusable
+                        products, separate waste properly and recycle
+                        suitable materials responsibly.
+                    </p>
+
+                    <div class="theory-tip">
+                        💡 <strong>Remember:</strong>
+                        Reducing plastic use is better than dealing
+                        with plastic waste after it is created.
+                    </div>
+                `
+            },
+
+
+            reduce: {
+                icon: "🛍️",
+                category: "REDUCE",
+                title: "Reduce Single-Use Plastic",
+                content: `
+                    <h3>What is Single-Use Plastic?</h3>
+
+                    <p>
+                        Single-use plastics are products designed to
+                        be used for a short time and then discarded.
+                        Examples include bags, cups, straws, bottles
+                        and food containers.
+                    </p>
+
+                    <h3>Better Alternatives</h3>
+
+                    <ul>
+                        <li>Use cloth or jute shopping bags.</li>
+                        <li>Carry a reusable water bottle.</li>
+                        <li>Use reusable food containers.</li>
+                        <li>Avoid unnecessary plastic packaging.</li>
+                        <li>Choose reusable cups whenever possible.</li>
+                    </ul>
+
+                    <h3>Why Reduce Plastic?</h3>
+
+                    <p>
+                        Reducing single-use plastic decreases the
+                        amount of plastic entering the waste stream
+                        and the natural environment.
+                    </p>
+
+                    <div class="theory-tip">
+                        🌱 <strong>Simple habit:</strong>
+                        Carry a reusable bag whenever you go shopping.
+                    </div>
+                `
+            },
+
+
+            recycling: {
+                icon: "♻️",
+                category: "RECYCLING",
+                title: "How to Recycle Plastic",
+                content: `
+                    <h3>What is Recycling?</h3>
+
+                    <p>
+                        Recycling is the process of collecting and
+                        processing suitable waste materials so they
+                        can be used again to make new products.
+                    </p>
+
+                    <h3>Basic Recycling Steps</h3>
+
+                    <ol>
+                        <li>Collect plastic waste separately.</li>
+                        <li>Keep recyclable materials as clean as possible.</li>
+                        <li>Separate different types of waste.</li>
+                        <li>Follow your local recycling rules.</li>
+                        <li>Send recyclable materials to an appropriate facility.</li>
+                    </ol>
+
+                    <h3>Important Point</h3>
+
+                    <p>
+                        Not every plastic item can be recycled in every
+                        location. Always check the recycling facilities
+                        available in your area.
+                    </p>
+
+                    <div class="theory-tip">
+                        ♻️ <strong>Remember:</strong>
+                        Reduce first, reuse when possible and recycle
+                        suitable materials responsibly.
+                    </div>
+                `
+            },
+
+
+            cleanup: {
+                icon: "🌍",
+                category: "COMMUNITY",
+                title: "Community Cleanup Guide",
+                content: `
+                    <h3>What is a Cleanup Campaign?</h3>
+
+                    <p>
+                        A cleanup campaign is a community activity where
+                        people work together to remove waste from public
+                        spaces such as parks, streets, beaches and riversides.
+                    </p>
+
+                    <h3>How to Participate</h3>
+
+                    <ol>
+                        <li>Choose a safe cleanup location.</li>
+                        <li>Work with a group or community organization.</li>
+                        <li>Use suitable gloves and collection bags.</li>
+                        <li>Separate recyclable materials when possible.</li>
+                        <li>Dispose of collected waste responsibly.</li>
+                    </ol>
+
+                    <h3>Why Community Action Matters</h3>
+
+                    <p>
+                        Community activities help make public places
+                        cleaner and encourage people to understand
+                        responsible waste management.
+                    </p>
+
+                    <div class="theory-tip">
+                        🤝 <strong>Together:</strong>
+                        A community working together can create a
+                        much bigger environmental impact.
+                    </div>
+                `
+            },
+
+
+            habits: {
+                icon: "🌱",
+                category: "LIFESTYLE",
+                title: "Build Sustainable Habits",
+                content: `
+                    <h3>What is a Sustainable Habit?</h3>
+
+                    <p>
+                        A sustainable habit is a regular action that
+                        reduces unnecessary environmental impact and
+                        helps conserve resources.
+                    </p>
+
+                    <h3>Simple Daily Habits</h3>
+
+                    <ul>
+                        <li>Carry a reusable shopping bag.</li>
+                        <li>Use a reusable water bottle.</li>
+                        <li>Avoid unnecessary plastic packaging.</li>
+                        <li>Reuse suitable containers.</li>
+                        <li>Separate waste correctly.</li>
+                        <li>Encourage others to reduce plastic use.</li>
+                    </ul>
+
+                    <h3>Start Small</h3>
+
+                    <p>
+                        You do not need to change everything in one day.
+                        Start with one simple habit and gradually add
+                        more sustainable choices.
+                    </p>
+
+                    <div class="theory-tip">
+                        💚 <strong>Small actions become powerful when
+                        they become daily habits.</strong>
+                    </div>
+                `
+            },
+
+
+            environment: {
+                icon: "🌳",
+                category: "ENVIRONMENT",
+                title: "Protect Our Green Spaces",
+                content: `
+                    <h3>What are Green Spaces?</h3>
+
+                    <p>
+                        Green spaces include parks, forests, gardens,
+                        wetlands and other natural areas that support
+                        plants, animals and people.
+                    </p>
+
+                    <h3>How Does Plastic Affect Them?</h3>
+
+                    <p>
+                        Plastic waste can accumulate in natural areas,
+                        affect wildlife and reduce the cleanliness
+                        and beauty of the environment.
+                    </p>
+
+                    <ul>
+                        <li>Keep plastic waste out of natural areas.</li>
+                        <li>Use reusable products.</li>
+                        <li>Never throw plastic waste on the ground.</li>
+                        <li>Participate in cleanup activities.</li>
+                        <li>Dispose of waste responsibly.</li>
+                    </ul>
+
+                    <div class="theory-tip">
+                        🌳 <strong>Protect nature:</strong>
+                        Clean surroundings help communities and
+                        ecosystems stay healthier.
+                    </div>
+                `
+            },
+
+
+            bags: {
+                icon: "🛍️",
+                category: "QUICK TIP",
+                title: "Carry Reusable Bags",
+                content: `
+                    <h3>Why Use Reusable Bags?</h3>
+
+                    <p>
+                        Reusable cloth and jute bags can be used many
+                        times and reduce the need for disposable
+                        shopping bags.
+                    </p>
+
+                    <h3>Easy Habit</h3>
+
+                    <p>
+                        Keep a reusable bag in your backpack, vehicle,
+                        room or another convenient place so that it
+                        is available when you go shopping.
+                    </p>
+
+                    <div class="theory-tip">
+                        🛍️ <strong>Challenge:</strong>
+                        Take a reusable bag with you on your next
+                        shopping trip.
+                    </div>
+                `
+            },
+
+
+            bottle: {
+                icon: "💧",
+                category: "QUICK TIP",
+                title: "Use a Reusable Bottle",
+                content: `
+                    <h3>Why Carry a Reusable Bottle?</h3>
+
+                    <p>
+                        Carrying your own bottle can help reduce the
+                        need to purchase single-use plastic bottles.
+                    </p>
+
+                    <h3>Benefits</h3>
+
+                    <ul>
+                        <li>Reduces disposable bottle waste.</li>
+                        <li>Can be reused many times.</li>
+                        <li>Useful for school, college and travel.</li>
+                        <li>Encourages a sustainable daily habit.</li>
+                    </ul>
+
+                    <div class="theory-tip">
+                        💧 <strong>Simple action:</strong>
+                        Fill your reusable bottle before leaving home.
+                    </div>
+                `
+            },
+
+
+            straws: {
+                icon: "🥤",
+                category: "QUICK TIP",
+                title: "Avoid Plastic Straws",
+                content: `
+                    <h3>Why Avoid Disposable Straws?</h3>
+
+                    <p>
+                        Plastic straws are commonly used for a short
+                        period and then discarded. Because of their
+                        small size, they can be difficult to collect
+                        after becoming waste.
+                    </p>
+
+                    <h3>Better Choices</h3>
+
+                    <ul>
+                        <li>Drink directly from a suitable cup.</li>
+                        <li>Refuse a straw when it is unnecessary.</li>
+                        <li>Choose a reusable alternative when needed.</li>
+                    </ul>
+
+                    <div class="theory-tip">
+                        🥤 <strong>One less disposable item is one less
+                        item entering the waste stream.</strong>
+                    </div>
+                `
+            },
+
+
+            recycle: {
+                icon: "♻️",
+                category: "QUICK TIP",
+                title: "Recycle Properly",
+                content: `
+                    <h3>Proper Waste Separation</h3>
+
+                    <p>
+                        Separating recyclable materials from other
+                        waste makes responsible waste management easier.
+                    </p>
+
+                    <h3>Good Practices</h3>
+
+                    <ol>
+                        <li>Keep recyclable materials separate.</li>
+                        <li>Do not mix them unnecessarily with food waste.</li>
+                        <li>Check local recycling requirements.</li>
+                        <li>Use authorized collection facilities.</li>
+                    </ol>
+
+                    <div class="theory-tip">
+                        ♻️ <strong>Think before you throw:</strong>
+                        Ask whether an item can be reduced, reused
+                        or responsibly recycled.
+                    </div>
+                `
+            }
+
+        };
+
+
+        /* =====================================================
+           OPEN RESOURCE
+        ===================================================== */
+
+        function openResource(key) {
+
+            console.log(
+                "Opening resource:",
+                key
+            );
+
+
+            const resource =
+                resourceData[key];
+
+
+            if (!resource) {
+
+                console.error(
+                    "Resource not found:",
+                    key
+                );
+
+                return;
+            }
+
+
+            const modal =
+                document.getElementById(
+                    "resourceModal"
+                );
+
+            const icon =
+                document.getElementById(
+                    "modalIcon"
+                );
+
+            const category =
+                document.getElementById(
+                    "modalCategory"
+                );
+
+            const title =
+                document.getElementById(
+                    "modalTitle"
+                );
+
+            const content =
+                document.getElementById(
+                    "modalContent"
+                );
+
+
+            if (!modal) {
+
+                console.error(
+                    "resourceModal not found"
+                );
+
+                return;
+            }
+
+
+            icon.textContent =
+                resource.icon;
+
+            category.textContent =
+                resource.category;
+
+            title.textContent =
+                resource.title;
+
+            content.innerHTML =
+                resource.content;
+
+
+            modal.classList.add(
+                "active"
+            );
+
+
+            document.body.style.overflow =
+                "hidden";
+
+        }
+
+
+        /* =====================================================
+           CLOSE RESOURCE
+        ===================================================== */
+
+        function closeResource() {
+
+            const modal =
+                document.getElementById(
+                    "resourceModal"
+                );
+
+
+            if (!modal) {
+                return;
+            }
+
+
+            modal.classList.remove(
+                "active"
+            );
+
+
+            document.body.style.overflow =
+                "";
+
+        }
+
+
+        /* =====================================================
+           CLICK BACKGROUND TO CLOSE
+        ===================================================== */
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            function () {
+
+                const modal =
+                    document.getElementById(
+                        "resourceModal"
+                    );
+
+
+                if (modal) {
+
+                    modal.addEventListener(
+                        "click",
+                        function (event) {
+
+                            if (
+                                event.target === modal
+                            ) {
+
+                                closeResource();
+
+                            }
+
+                        }
+                    );
+
+                }
+
+            }
+        );
+
+
+        /* =====================================================
+           ESC KEY
+        ===================================================== */
+
+        document.addEventListener(
+            "keydown",
+            function (event) {
+
+                if (
+                    event.key === "Escape"
+                ) {
+
+                    closeResource();
+
+                }
+
+            }
+        );
+
+
+        /* =====================================================
+           LOGOUT
+        ===================================================== */
+
+        async function logoutUser() {
+
+            try {
+
+                await fetch(
+                    "/api/logout",
+                    {
+                        method: "POST",
+                        credentials: "include"
+                    }
+                );
+
+            } catch (error) {
+
+                console.log(
+                    "Logout error:",
+                    error
+                );
+
+            }
+
+
+            localStorage.removeItem(
+                "plasticless_logged_in"
+            );
+
+
+            window.location.href =
+                "index.html";
+
+        }
+
+    </script>
+
+
+    <!-- =========================
+         COMMON NAVBAR JAVASCRIPT
+    ========================= -->
+
+    <script src="js/navbar.js"></script>
+
+</body>
+
+</html>

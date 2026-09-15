@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>PlasticLess | Contact Us</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f5fff8;
+            color: #173d29;
+        }
+
+        /* ================= NAVBAR ================= */
+
+        .navbar {
+            width: 100%;
+            position: relative;
+            z-index: 1000;
+        }
+
+        /* ================= CONTACT PAGE ================= */
+
+        .contact-page {
+            min-height: 100vh;
+        }
+
+        /* ================= HERO ================= */
+
+        .contact-hero {
+            min-height: 430px;
+            padding: 100px 20px 80px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+
+            background:
+                linear-gradient(
+                    rgba(10, 70, 35, 0.22),
+                    rgba(10, 70, 35, 0.22)
+                ),
+                url("/images/contact-bg.png");
+
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+
+            position: relative;
+            overflow: hidden;
+        }
+
+        .contact-hero::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: rgba(255, 255, 255, 0.04);
+            pointer-events: none;
+        }
+
+        .contact-hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 850px;
+            color: white;
+        }
+
+        .contact-hero-content .tag {
+            display: inline-block;
+            padding: 9px 18px;
+            border-radius: 30px;
+
+            background: rgba(255, 255, 255, 0.20);
+            border: 1px solid rgba(255, 255, 255, 0.45);
+
+            font-size: 14px;
+            font-weight: bold;
+            letter-spacing: 1px;
+
+            margin-bottom: 20px;
+        }
+
+        .contact-hero-content h1 {
+            font-size: 52px;
+            line-height: 1.15;
+            margin-bottom: 20px;
+
+            text-shadow: 0 3px 15px rgba(0, 0, 0, 0.25);
+        }
+
+        .contact-hero-content p {
+            max-width: 700px;
+            margin: auto;
+
+            font-size: 18px;
+            line-height: 1.7;
+
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        /* ================= MAIN CONTAINER ================= */
+
+        .contact-container {
+            width: min(1150px, 92%);
+            margin: 70px auto;
+        }
+
+        /* ================= INFO GRID ================= */
+
+        .contact-info-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+            margin-bottom: 55px;
+        }
+
+        .contact-info-card {
+            background: white;
+            padding: 30px 25px;
+            border-radius: 18px;
+
+            text-align: center;
+
+            box-shadow: 0 8px 25px rgba(24, 90, 52, 0.10);
+
+            transition: 0.3s ease;
+        }
+
+        .contact-info-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 14px 30px rgba(24, 90, 52, 0.16);
+        }
+
+        .contact-icon {
+            width: 65px;
+            height: 65px;
+
+            margin: 0 auto 18px;
+
+            border-radius: 50%;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            background: #e4f6e9;
+
+            font-size: 30px;
+        }
+
+        .contact-info-card h3 {
+            font-size: 20px;
+            color: #176b3a;
+            margin-bottom: 10px;
+        }
+
+        .contact-info-card p {
+            color: #617267;
+            line-height: 1.6;
+        }
+
+        /* ================= CONTACT LAYOUT ================= */
+
+        .contact-layout {
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            gap: 35px;
+            align-items: stretch;
+        }
+
+        /* ================= MESSAGE BOX ================= */
+
+        .contact-message {
+            background: linear-gradient(
+                145deg,
+                #145c34,
+                #2d8b50
+            );
+
+            color: white;
+
+            border-radius: 22px;
+            padding: 45px 35px;
+
+            box-shadow: 0 12px 30px rgba(20, 92, 52, 0.16);
+        }
+
+        .contact-message h2 {
+            font-size: 32px;
+            margin-bottom: 18px;
+        }
+
+        .contact-message p {
+            line-height: 1.8;
+            color: rgba(255, 255, 255, 0.88);
+            margin-bottom: 25px;
+        }
+
+        .contact-message-list {
+            list-style: none;
+            margin-top: 25px;
+        }
+
+        .contact-message-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+
+            margin-bottom: 18px;
+
+            line-height: 1.6;
+        }
+
+        .contact-message-list span {
+            font-size: 20px;
+        }
+
+        /* ================= FORM ================= */
+
+        .contact-form-box {
+            background: white;
+            border-radius: 22px;
+
+            padding: 40px 35px;
+
+            box-shadow: 0 10px 30px rgba(24, 90, 52, 0.10);
+        }
+
+        .contact-form-box h2 {
+            color: #145c34;
+            font-size: 30px;
+            margin-bottom: 25px;
+        }
+
+        .contact-form {
+            width: 100%;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+
+            font-size: 14px;
+            font-weight: bold;
+
+            color: #315b42;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+
+            padding: 14px 15px;
+
+            border: 1px solid #d7e6dc;
+            border-radius: 10px;
+
+            outline: none;
+
+            font-size: 15px;
+            font-family: inherit;
+
+            background: #fbfffc;
+
+            transition: 0.2s ease;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            border-color: #3b9b5f;
+            box-shadow: 0 0 0 3px rgba(59, 155, 95, 0.10);
+        }
+
+        .form-group textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+
+        .submit-btn {
+            width: 100%;
+
+            padding: 15px 20px;
+
+            border: none;
+            border-radius: 10px;
+
+            background: #1d7b43;
+            color: white;
+
+            font-size: 16px;
+            font-weight: bold;
+
+            cursor: pointer;
+
+            transition: 0.25s ease;
+        }
+
+        .submit-btn:hover {
+            background: #145c34;
+            transform: translateY(-2px);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* ================= STATUS ================= */
+
+        #formStatus {
+            display: none;
+
+            margin-top: 18px;
+            padding: 13px 15px;
+
+            border-radius: 10px;
+
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        #formStatus.success {
+            display: block;
+            background: #e5f7ea;
+            color: #176b3a;
+            border: 1px solid #b9e4c5;
+        }
+
+        #formStatus.error {
+            display: block;
+            background: #fff0f0;
+            color: #a52b2b;
+            border: 1px solid #f1c0c0;
+        }
+
+        /* ================= LOCATION ================= */
+
+        .location-section {
+            margin-top: 65px;
+        }
+
+        .location-section h2 {
+            text-align: center;
+            color: #145c34;
+            font-size: 32px;
+            margin-bottom: 25px;
+        }
+
+        .location-box {
+            background: white;
+            border-radius: 20px;
+            padding: 35px;
+
+            text-align: center;
+
+            box-shadow: 0 8px 25px rgba(24, 90, 52, 0.09);
+        }
+
+        .location-box .location-icon {
+            font-size: 42px;
+            margin-bottom: 15px;
+        }
+
+        .location-box h3 {
+            color: #1d7b43;
+            margin-bottom: 8px;
+        }
+
+        .location-box p {
+            color: #68786e;
+            line-height: 1.7;
+        }
+
+        /* ================= FOOTER ================= */
+
+        footer {
+            margin-top: 80px;
+
+            background: #103d25;
+            color: white;
+
+            padding: 35px 20px;
+
+            text-align: center;
+        }
+
+        footer p {
+            color: rgba(255, 255, 255, 0.75);
+            line-height: 1.6;
+        }
+
+        /* ================= RESPONSIVE ================= */
+
+        @media (max-width: 900px) {
+
+            .contact-info-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .contact-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .contact-hero-content h1 {
+                font-size: 42px;
+            }
+        }
+
+        @media (max-width: 650px) {
+
+            .contact-hero {
+                min-height: 380px;
+                padding: 80px 20px 60px;
+            }
+
+            .contact-hero-content h1 {
+                font-size: 34px;
+            }
+
+            .contact-hero-content p {
+                font-size: 16px;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+                gap: 0;
+            }
+
+            .contact-container {
+                margin: 45px auto;
+            }
+
+            .contact-message,
+            .contact-form-box {
+                padding: 28px 22px;
+            }
+
+            .contact-message h2,
+            .contact-form-box h2 {
+                font-size: 26px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- NAVBAR -->
+    <div class="navbar"></div>
+
+    <main class="contact-page">
+
+        <!-- ================= HERO ================= -->
+
+        <section class="contact-hero">
+
+            <div class="contact-hero-content">
+
+                <div class="tag">
+                    🌿 GET IN TOUCH
+                </div>
+
+                <h1>
+                    Let's Make a Difference Together
+                </h1>
+
+                <p>
+                    Have a question, suggestion, or want to join the
+                    PlasticLess movement? We would love to hear from you.
+                </p>
+
+            </div>
+
+        </section>
+
+        <!-- ================= MAIN ================= -->
+
+        <section class="contact-container">
+
+            <!-- INFO CARDS -->
+
+            <div class="contact-info-grid">
+
+                <div class="contact-info-card">
+
+                    <div class="contact-icon">
+                        📍
+                    </div>
+
+                    <h3>Our Location</h3>
+
+                    <p>
+                        Guntur, Andhra Pradesh, India
+                    </p>
+
+                </div>
+
+
+                <div class="contact-info-card">
+
+                    <div class="contact-icon">
+                        ✉️
+                    </div>
+
+                    <h3>Email Us</h3>
+
+                    <p>
+                        info@plasticless.org
+                    </p>
+
+                </div>
+
+
+                <div class="contact-info-card">
+
+                    <div class="contact-icon">
+                        📞
+                    </div>
+
+                    <h3>Call Us</h3>
+
+                    <p>
+                        +91 99999 99999
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- CONTACT CONTENT -->
+
+            <div class="contact-layout">
+
+                <!-- MESSAGE -->
+
+                <div class="contact-message">
+
+                    <h2>
+                        We Are Here to Help 🌱
+                    </h2>
+
+                    <p>
+                        PlasticLess is a community-driven movement
+                        working toward a cleaner and greener future.
+                        Your ideas, questions, and support can help us
+                        make a bigger impact.
+                    </p>
+
+                    <ul class="contact-message-list">
+
+                        <li>
+                            <span>🌍</span>
+                            <div>
+                                Help us build a plastic-free community.
+                            </div>
+                        </li>
+
+                        <li>
+                            <span>♻️</span>
+                            <div>
+                                Share your recycling ideas and experiences.
+                            </div>
+                        </li>
+
+                        <li>
+                            <span>🌱</span>
+                            <div>
+                                Join our campaigns and environmental activities.
+                            </div>
+                        </li>
+
+                        <li>
+                            <span>💚</span>
+                            <div>
+                                Together, every small action creates change.
+                            </div>
+                        </li>
+
+                    </ul>
+
+                </div>
+
+
+                <!-- FORM -->
+
+                <div class="contact-form-box">
+
+                    <h2>
+                        Send Us a Message
+                    </h2>
+
+                    <form
+                        id="contactForm"
+                        class="contact-form"
+                        autocomplete="off"
+                    >
+
+                        <div class="form-row">
+
+                            <div class="form-group">
+
+                                <label for="name">
+                                    Name
+                                </label>
+
+                                <input
+                                    type="text"
+                                    id="name"
+                                    name="name"
+                                    placeholder="Enter your name"
+                                    required
+                                >
+
+                            </div>
+
+
+                            <div class="form-group">
+
+                                <label for="email">
+                                    Email
+                                </label>
+
+                                <input
+                                    type="email"
+                                    id="email"
+                                    name="email"
+                                    placeholder="Enter your email"
+                                    required
+                                >
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="form-row">
+
+                            <div class="form-group">
+
+                                <label for="phone">
+                                    Phone
+                                </label>
+
+                                <input
+                                    type="tel"
+                                    id="phone"
+                                    name="phone"
+                                    placeholder="Enter your phone number"
+                                >
+
+                            </div>
+
+
+                            <div class="form-group">
+
+                                <label for="subject">
+                                    Subject
+                                </label>
+
+                                <input
+                                    type="text"
+                                    id="subject"
+                                    name="subject"
+                                    placeholder="Enter subject"
+                                    required
+                                >
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label for="message">
+                                Message
+                            </label>
+
+                            <textarea
+                                id="message"
+                                name="message"
+                                placeholder="Write your message..."
+                                required
+                            ></textarea>
+
+                        </div>
+
+
+                        <button
+                            type="submit"
+                            class="submit-btn"
+                            id="submitBtn"
+                        >
+                            Send Message 🌿
+                        </button>
+
+
+                        <div id="formStatus"></div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+
+            <!-- LOCATION -->
+
+            <div class="location-section">
+
+                <h2>
+                    Find Us
+                </h2>
+
+                <div class="location-box">
+
+                    <div class="location-icon">
+                        📍
+                    </div>
+
+                    <h3>
+                        PlasticLess
+                    </h3>
+
+                    <p>
+                        Guntur, Andhra Pradesh, India
+                    </p>
+
+                    <p>
+                        Working together for a cleaner,
+                        greener and plastic-free future.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- FOOTER -->
+
+    <footer>
+
+        <p>
+            © 2026 PlasticLess. Together, Let's Make Plastic History. 🌱
+        </p>
+
+    </footer>
+
+
+    <!-- NAVBAR JS -->
+
+    <script src="js/navbar.js"></script>
+
+
+    <!-- CONTACT FORM JS -->
+
+    <script>
+
+        const contactForm = document.getElementById("contactForm");
+        const formStatus = document.getElementById("formStatus");
+        const submitBtn = document.getElementById("submitBtn");
+
+        contactForm.addEventListener("submit", async function (event) {
+
+            event.preventDefault();
+
+            formStatus.className = "";
+            formStatus.style.display = "none";
+
+            submitBtn.disabled = true;
+            submitBtn.textContent = "Sending...";
+
+            const formData = {
+                name: document.getElementById("name").value.trim(),
+                email: document.getElementById("email").value.trim(),
+                phone: document.getElementById("phone").value.trim(),
+                subject: document.getElementById("subject").value.trim(),
+                message: document.getElementById("message").value.trim()
+            };
+
+            try {
+
+                const response = await fetch("/api/contact", {
+
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+
+                    credentials: "include",
+
+                    body: JSON.stringify(formData)
+
+                });
+
+                const data = await response.json();
+
+                if (!response.ok || data.success !== true) {
+
+                    throw new Error(
+                        data.message || "Unable to send your message."
+                    );
+
+                }
+
+                formStatus.textContent =
+                    "✅ Your message has been sent successfully. Thank you for contacting PlasticLess!";
+
+                formStatus.className = "success";
+                formStatus.style.display = "block";
+
+                contactForm.reset();
+
+            } catch (error) {
+
+                console.error("Contact form error:", error);
+
+                formStatus.textContent =
+                    "❌ " + (error.message || "Unable to send your message. Please try again.");
+
+                formStatus.className = "error";
+                formStatus.style.display = "block";
+
+            } finally {
+
+                submitBtn.disabled = false;
+                submitBtn.textContent = "Send Message 🌿";
+
+            }
+
+        });
+
+
+        /* Prevent old form values from appearing */
+
+        window.addEventListener("pageshow", function () {
+
+            contactForm.reset();
+
+        });
+
+    </script>
+
+</body>
+</html>

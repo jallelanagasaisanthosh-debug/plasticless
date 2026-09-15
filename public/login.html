@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Login | PlasticLess</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background:
+                linear-gradient(rgba(3, 35, 20, 0.72), rgba(3, 35, 20, 0.72)),
+                linear-gradient(135deg, #0b5d3b, #18a558);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .login-wrapper {
+            width: 100%;
+            max-width: 1000px;
+            min-height: 600px;
+            background: rgba(255, 255, 255, 0.97);
+            border-radius: 25px;
+            overflow: hidden;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        /* LEFT SIDE */
+
+        .login-left {
+            background:
+                linear-gradient(rgba(0, 75, 45, 0.78), rgba(0, 100, 55, 0.78)),
+                url("images/hero.jpg");
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 55px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .logo {
+            font-size: 32px;
+            font-weight: 800;
+            margin-bottom: 30px;
+        }
+
+        .logo span {
+            color: #9cffc5;
+        }
+
+        .login-left h1 {
+            font-size: 46px;
+            line-height: 1.1;
+            margin-bottom: 20px;
+        }
+
+        .login-left p {
+            font-size: 17px;
+            line-height: 1.7;
+            color: #e5fff0;
+            max-width: 430px;
+        }
+
+        .eco-points {
+            margin-top: 35px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .eco-point {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 15px;
+        }
+
+        .eco-icon {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.18);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* RIGHT SIDE */
+
+        .login-right {
+            padding: 55px 60px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .login-right h2 {
+            color: #075c3b;
+            font-size: 34px;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            color: #777;
+            margin-bottom: 32px;
+            font-size: 15px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .input-box {
+            position: relative;
+        }
+
+        .input-box span {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 18px;
+        }
+
+        .input-box input {
+            width: 100%;
+            height: 52px;
+            border: 1px solid #d6d6d6;
+            border-radius: 12px;
+            padding: 0 15px 0 48px;
+            font-size: 15px;
+            outline: none;
+            transition: 0.3s;
+            background: #fafafa;
+        }
+
+        .input-box input:focus {
+            border-color: #16a05d;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(22, 160, 93, 0.12);
+        }
+
+        .login-btn {
+            width: 100%;
+            height: 54px;
+            border: none;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #087f4f, #18a558);
+            color: white;
+            font-size: 17px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-top: 5px;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(24, 165, 88, 0.3);
+        }
+
+        .login-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .message {
+            display: none;
+            margin-top: 18px;
+            padding: 13px 15px;
+            border-radius: 10px;
+            text-align: center;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .message.success {
+            display: block;
+            background: #e8fff1;
+            color: #087f4f;
+            border: 1px solid #9ee8bb;
+        }
+
+        .message.error {
+            display: block;
+            background: #fff0f0;
+            color: #c62828;
+            border: 1px solid #ffc2c2;
+        }
+
+        .register-text {
+            text-align: center;
+            margin-top: 25px;
+            color: #777;
+            font-size: 15px;
+        }
+
+        .register-text a {
+            color: #07834f;
+            text-decoration: none;
+            font-weight: 700;
+        }
+
+        .register-text a:hover {
+            text-decoration: underline;
+        }
+
+        .back-home {
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .back-home a {
+            color: #777;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .back-home a:hover {
+            color: #07834f;
+        }
+
+        /* MOBILE */
+
+        @media (max-width: 800px) {
+            .login-wrapper {
+                grid-template-columns: 1fr;
+                max-width: 550px;
+            }
+
+            .login-left {
+                padding: 40px 30px;
+                min-height: 300px;
+            }
+
+            .login-left h1 {
+                font-size: 35px;
+            }
+
+            .eco-points {
+                margin-top: 20px;
+            }
+
+            .login-right {
+                padding: 40px 30px;
+            }
+        }
+
+        @media (max-width: 450px) {
+            .login-left {
+                padding: 30px 22px;
+            }
+
+            .login-right {
+                padding: 35px 22px;
+            }
+
+            .login-right h2 {
+                font-size: 28px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="login-wrapper">
+
+    <!-- LEFT -->
+    <div class="login-left">
+
+        <div class="logo">
+            🌿 Plastic<span>Less</span>
+        </div>
+
+        <h1>
+            Welcome Back!
+        </h1>
+
+        <p>
+            Together we can reduce plastic pollution and create
+            a cleaner, greener and healthier planet.
+        </p>
+
+        <div class="eco-points">
+
+            <div class="eco-point">
+                <div class="eco-icon">♻️</div>
+                <span>Reduce plastic waste</span>
+            </div>
+
+            <div class="eco-point">
+                <div class="eco-icon">🌱</div>
+                <span>Complete eco-friendly tasks</span>
+            </div>
+
+            <div class="eco-point">
+                <div class="eco-icon">🌍</div>
+                <span>Join cleanup campaigns</span>
+            </div>
+
+            <div class="eco-point">
+                <div class="eco-icon">🏆</div>
+                <span>Earn points and make an impact</span>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- RIGHT -->
+    <div class="login-right">
+
+        <h2>Login</h2>
+
+        <p class="subtitle">
+            Sign in to continue your PlasticLess journey.
+        </p>
+
+        <form
+            id="loginForm"
+            autocomplete="off"
+        >
+
+            <div class="form-group">
+
+                <label for="email">
+                    Email Address
+                </label>
+
+                <div class="input-box">
+                    <span>📧</span>
+
+                    <input
+                        type="email"
+                        id="email"
+                        name="login_email"
+                        placeholder="Enter your email"
+                        required
+                        autocomplete="off"
+                        autocorrect="off"
+                        autocapitalize="none"
+                        spellcheck="false"
+                    >
+                </div>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="password">
+                    Password
+                </label>
+
+                <div class="input-box">
+                    <span>🔒</span>
+
+                    <input
+                        type="password"
+                        id="password"
+                        name="login_password"
+                        placeholder="Enter your password"
+                        required
+                        autocomplete="new-password"
+                    >
+                </div>
+
+            </div>
+
+
+            <button
+                type="submit"
+                class="login-btn"
+                id="loginBtn"
+            >
+                🔐 Login
+            </button>
+
+        </form>
+
+
+        <div id="message" class="message"></div>
+
+
+        <div class="register-text">
+            Don't have an account?
+            <a href="/register.html">Create Account</a>
+        </div>
+
+        <div class="back-home">
+            <a href="/index.html">← Back to Home</a>
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+    const loginForm = document.getElementById("loginForm");
+    const loginBtn = document.getElementById("loginBtn");
+    const message = document.getElementById("message");
+
+    loginForm.addEventListener("submit", async function(event) {
+
+        event.preventDefault();
+
+        const email =
+            document.getElementById("email").value.trim();
+
+        const password =
+            document.getElementById("password").value;
+
+        message.className = "message";
+        message.textContent = "";
+
+        if (!email || !password) {
+
+            message.className = "message error";
+
+            message.textContent =
+                "❌ Please enter email and password.";
+
+            return;
+        }
+
+        loginBtn.disabled = true;
+        loginBtn.textContent = "⏳ Logging in...";
+
+        try {
+
+            const response = await fetch("/api/login", {
+
+                method: "POST",
+
+                headers: {
+                    "Content-Type": "application/json"
+                },
+
+                credentials: "include",
+
+                body: JSON.stringify({
+                    email: email,
+                    password: password
+                })
+
+            });
+
+
+            const data =
+                await response.json();
+
+
+            if (
+                response.ok &&
+                data.success
+            ) {
+
+                message.className =
+                    "message success";
+
+                message.textContent =
+                    "✅ Login successful! Opening Dashboard...";
+
+
+                setTimeout(function() {
+
+                    window.location.href =
+                        "/dashboard.html";
+
+                }, 700);
+
+            } else {
+
+                message.className =
+                    "message error";
+
+                message.textContent =
+                    "❌ " +
+                    (
+                        data.message ||
+                        "Invalid email or password."
+                    );
+
+                loginBtn.disabled = false;
+
+                loginBtn.textContent =
+                    "🔐 Login";
+
+            }
+
+        } catch (error) {
+
+            console.error(
+                "Login Error:",
+                error
+            );
+
+            message.className =
+                "message error";
+
+            message.textContent =
+                "❌ Unable to connect to server. Make sure Node.js server is running.";
+
+            loginBtn.disabled = false;
+
+            loginBtn.textContent =
+                "🔐 Login";
+
+        }
+
+    });
+
+
+    /* =========================================
+       CLEAR AUTOMATICALLY RESTORED VALUES
+       ========================================= */
+
+    window.addEventListener(
+        "pageshow",
+        function() {
+
+            document.getElementById("email").value = "";
+            document.getElementById("password").value = "";
+
+        }
+    );
+
+</script>
+
+</body>
+</html>
