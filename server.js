@@ -32,6 +32,51 @@ function databaseNameFromUri(uri) {
 const mongoClient = new MongoClient(MONGODB_URI);
 let database;
 
+const defaultTasks = [
+    {
+        id: 1,
+        title: "Take the Plastic-Free Pledge",
+        description: "Make a personal commitment to reduce your use of plastic.",
+        points: 20,
+        icon: "🌱"
+    },
+    {
+        id: 2,
+        title: "Avoid Plastic Bags",
+        description: "Carry reusable cloth or jute bags instead of using plastic bags.",
+        points: 20,
+        icon: "🛍️"
+    },
+    {
+        id: 3,
+        title: "Use a Reusable Bottle",
+        description: "Replace single-use plastic bottles with a reusable water bottle.",
+        points: 20,
+        icon: "💧"
+    },
+    {
+        id: 4,
+        title: "Collect & Recycle Plastic",
+        description: "Collect plastic waste and send it to an appropriate recycling facility.",
+        points: 30,
+        icon: "♻️"
+    },
+    {
+        id: 5,
+        title: "Join a Cleanup Campaign",
+        description: "Participate in a local cleanup campaign and help remove plastic waste.",
+        points: 50,
+        icon: "🌍"
+    },
+    {
+        id: 6,
+        title: "Spread Plastic-Free Awareness",
+        description: "Encourage your friends, family, and community to reduce plastic use.",
+        points: 20,
+        icon: "📢"
+    }
+];
+
 function collection(name) {
     if (!database) {
         throw new Error("MongoDB is not connected");
@@ -1101,6 +1146,19 @@ async function startServer() {
     try {
         await mongoClient.connect();
         database = mongoClient.db(databaseNameFromUri(MONGODB_URI));
+
+        await Promise.all(
+            defaultTasks.map(task =>
+                database.collection("tasks").updateOne(
+                    { id: task.id },
+                    {
+                        $set: task,
+                        $setOnInsert: { created_at: new Date() }
+                    },
+                    { upsert: true }
+                )
+            )
+        );
 
         await Promise.all([
             database.collection("users").createIndex({ email: 1 }, { unique: true }),
