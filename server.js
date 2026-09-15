@@ -1,5 +1,5 @@
 const express = require("express");
-const mysql = require("mysql2/promise");
+const { MongoClient } = require("mongodb");
 const bcrypt = require("bcryptjs");
 const session = require("express-session");
 const dotenv = require("dotenv");
@@ -10,32 +10,77 @@ dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const MONGODB_URI =
+    process.env.MONGODB_URI || "mongodb://127.0.0.1:27017";
 
-/* =========================================================
-   DATABASE
-========================================================= */
+function databaseNameFromUri(uri) {
+    if (process.env.MONGODB_DB) {
+        return process.env.MONGODB_DB;
+    }
 
-const pool = mysql.createPool({
-    host: process.env.DB_HOST || "localhost",
-    port: Number(process.env.DB_PORT) || 3306,
-    user: process.env.DB_USER || "root",
-    password: process.env.DB_PASSWORD || "",
-    database: process.env.DB_NAME || "plasticless_db",
+    // The MongoDB driver uses "test" when an URI has no database. Keep the
+    // application's historical database name instead.
+    const match = uri.match(
+        /^[^:]+:\/\/(?:[^@/]+@)?[^/]+\/([^?/#]+)/
+    );
 
-    waitForConnections: true,
-    connectionLimit: 10,
-    queueLimit: 0,
+    return match && match[1]
+        ? decodeURIComponent(match[1])
+        : "plasticless";
+}
 
-    ssl:
-        process.env.DB_HOST &&
-        process.env.DB_HOST !== "localhost"
-            ? {
-                rejectUnauthorized: false
-            }
-            : undefined,
+const mongoClient = new MongoClient(MONGODB_URI);
+let database;
 
-    connectTimeout: 30000
-});
+function collection(name) {
+    if (!database) {
+        throw new Error("MongoDB is not connected");
+    }
+
+    return database.collection(name);
+}
+
+function publicDocument(document) {
+    if (!document) {
+        return document;
+    }
+
+    const { _id, ...result } = document;
+    return result;
+}
+
+function publicDocuments(documents) {
+    return documents.map(publicDocument);
+}
+
+async function nextNumericId(name) {
+    const latest = await collection(name).findOne(
+        {},
+        {
+            sort: { id: -1 },
+            projection: { id: 1 }
+        }
+    );
+
+    return latest && Number.isInteger(latest.id)
+        ? latest.id + 1
+        : 1;
+}
+
+function monthBounds(month) {
+    const [year, monthNumber] = month.split("-").map(Number);
+    const nextMonth =
+        monthNumber === 12
+            ? `${year + 1}-01`
+            : `${year}-${String(monthNumber + 1).padStart(2, "0")}`;
+
+    return {
+        start: `${month}-01`,
+        end: `${nextMonth}-01`,
+        startDate: new Date(`${month}-01T00:00:00.000Z`),
+        endDate: new Date(`${nextMonth}-01T00:00:00.000Z`)
+    };
+}
 
 /* =========================================================
    MIDDLEWARE
@@ -49,181 +94,85 @@ app.use(
 );
 
 app.use(express.json());
-
-app.use(
-    express.urlencoded({
-        extended: true
-    })
-);
+app.use(express.urlencoded({ extended: true }));
 
 app.use(
     session({
-        secret:
-            process.env.SESSION_SECRET ||
-            "plasticless_secret_2026",
-
+        secret: process.env.SESSION_SECRET || "plasticless_secret_2026",
         resave: false,
         saveUninitialized: false,
         rolling: true,
-
         cookie: {
             httpOnly: true,
-
-            /*
-             * Render uses HTTPS.
-             * This allows the session cookie to work
-             * correctly on the deployed website.
-             */
-            secure:
-                process.env.NODE_ENV === "production",
-
+            secure: process.env.NODE_ENV === "production",
             sameSite: "lax",
-
-            maxAge:
-                24 * 60 * 60 * 1000
+            maxAge: 24 * 60 * 60 * 1000
         }
     })
 );
 
-app.use(
-    express.static(
-        path.join(__dirname, "public")
-    )
-);
+app.use(express.static(path.join(__dirname, "public")));
 
 /* =========================================================
    PAGE ROUTES
 ========================================================= */
 
-app.get("/", (req, res) => {
-    res.sendFile(
-        path.join(
-            __dirname,
-            "public",
-            "index.html"
-        )
-    );
+const pages = [
+    "index",
+    "login",
+    "register",
+    "about",
+    "campaigns",
+    "resources",
+    "tasks",
+    "collection",
+    "reports",
+    "contact",
+    "dashboard",
+    "profile"
+];
+
+pages.forEach(page => {
+    app.get(`/${page === "index" ? "" : `${page}.html`}`, (req, res) => {
+        res.sendFile(path.join(__dirname, "public", `${page}.html`));
+    });
 });
 
 app.get("/index.html", (req, res) => {
-    res.sendFile(
-        path.join(
-            __dirname,
-            "public",
-            "index.html"
-        )
-    );
+    res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
-app.get("/login.html", (req, res) => {
-    res.sendFile(
-        path.join(
-            __dirname,
-            "public",
-            "login.html"
-        )
-    );
-});
+/* =========================================================
+   AUTHENTICATION HELPERS
+========================================================= */
 
-app.get("/register.html", (req, res) => {
-    res.sendFile(
-        path.join(
-            __dirname,
-            "public",
-            "register.html"
-        )
-    );
-});
+function requireLogin(req, res, next) {
+    if (!req.session.userId) {
+        return res.status(401).json({
+            success: false,
+            message: "Login required"
+        });
+    }
 
-app.get("/about.html", (req, res) => {
-    res.sendFile(
-        path.join(
-            __dirname,
-            "public",
-            "about.html"
-        )
-    );
-});
+    next();
+}
 
-app.get("/campaigns.html", (req, res) => {
-    res.sendFile(
-        path.join(
-            __dirname,
-            "public",
-            "campaigns.html"
-        )
+async function findUserById(id) {
+    return collection("users").findOne(
+        { id },
+        {
+            projection: {
+                _id: 0,
+                id: 1,
+                name: 1,
+                email: 1,
+                role: 1,
+                created_at: 1,
+                profile_picture: 1
+            }
+        }
     );
-});
-
-app.get("/resources.html", (req, res) => {
-    res.sendFile(
-        path.join(
-            __dirname,
-            "public",
-            "resources.html"
-        )
-    );
-});
-
-app.get("/tasks.html", (req, res) => {
-    res.sendFile(
-        path.join(
-            __dirname,
-            "public",
-            "tasks.html"
-        )
-    );
-});
-
-app.get("/collection.html", (req, res) => {
-    res.sendFile(
-        path.join(
-            __dirname,
-            "public",
-            "collection.html"
-        )
-    );
-});
-
-app.get("/reports.html", (req, res) => {
-    res.sendFile(
-        path.join(
-            __dirname,
-            "public",
-            "reports.html"
-        )
-    );
-});
-
-app.get("/contact.html", (req, res) => {
-    res.sendFile(
-        path.join(
-            __dirname,
-            "public",
-            "contact.html"
-        )
-    );
-});
-
-app.get("/dashboard.html", (req, res) => {
-    res.sendFile(
-        path.join(
-            __dirname,
-            "public",
-            "dashboard.html"
-        )
-    );
-});
-
-app.get("/profile.html", (req, res) => {
-    res.sendFile(
-        path.join(
-            __dirname,
-            "public",
-            "profile.html"
-        )
-    );
-});
+}
 
 /* =========================================================
    TEST API
@@ -231,2125 +180,949 @@ app.get("/profile.html", (req, res) => {
 
 app.get("/api/test", async (req, res) => {
     try {
-        await pool.query(
-            "SELECT 1 AS test"
-        );
-
+        await database.command({ ping: 1 });
         res.json({
             success: true,
-            message:
-                "PlasticLess backend is working!",
+            message: "PlasticLess backend is working!",
             database: true
         });
-
     } catch (error) {
-
-        console.error(
-            "❌ API database test failed:"
-        );
-
-        console.error(
-            "Error code:",
-            error.code
-        );
-
-        console.error(
-            "Error message:",
-            error.message
-        );
-
+        console.error("API database test failed:", error);
         res.status(500).json({
             success: false,
-            message:
-                "Database connection failed."
+            message: "Database connection failed."
         });
     }
 });
 
 /* =========================================================
-   AUTHENTICATION HELPERS
-========================================================= */
-
-function requireLogin(
-    req,
-    res,
-    next
-) {
-    if (!req.session.userId) {
-
-        return res.status(401).json({
-            success: false,
-            message:
-                "Login required"
-        });
-    }
-
-    next();
-}
-
-/* =========================================================
    CURRENT USER
 ========================================================= */
 
-app.get(
-    "/api/current-user",
-    async (req, res) => {
-
-        try {
-
-            if (!req.session.userId) {
-
-                return res.json({
-                    success: true,
-                    loggedIn: false,
-                    user: null
-                });
-            }
-
-            const [rows] =
-                await pool.query(
-                    `
-                    SELECT
-                        id,
-                        name,
-                        email,
-                        role,
-                        created_at
-                    FROM users
-                    WHERE id = ?
-                    LIMIT 1
-                    `,
-                    [
-                        req.session.userId
-                    ]
-                );
-
-            if (rows.length === 0) {
-
-                req.session.destroy(
-                    () => {}
-                );
-
-                return res.json({
-                    success: true,
-                    loggedIn: false,
-                    user: null
-                });
-            }
-
-            res.json({
+app.get("/api/current-user", async (req, res) => {
+    try {
+        if (!req.session.userId) {
+            return res.json({
                 success: true,
-                loggedIn: true,
-                user: rows[0]
-            });
-
-        } catch (error) {
-
-            console.error(
-                "Current user error:",
-                error
-            );
-
-            res.status(500).json({
-                success: false,
-                message:
-                    "Unable to get current user"
+                loggedIn: false,
+                user: null
             });
         }
+
+        const user = await findUserById(req.session.userId);
+        if (!user) {
+            req.session.destroy(() => {});
+            return res.json({
+                success: true,
+                loggedIn: false,
+                user: null
+            });
+        }
+
+        res.json({
+            success: true,
+            loggedIn: true,
+            user
+        });
+    } catch (error) {
+        console.error("Current user error:", error);
+        res.status(500).json({
+            success: false,
+            message: "Unable to get current user"
+        });
     }
-);
+});
 
 /* =========================================================
    ME API
 ========================================================= */
 
-app.get(
-    "/api/me",
-    requireLogin,
-    async (req, res) => {
-
-        try {
-
-            const [rows] =
-                await pool.query(
-                    `
-                    SELECT
-                        id,
-                        name,
-                        email,
-                        role,
-                        created_at
-                    FROM users
-                    WHERE id = ?
-                    LIMIT 1
-                    `,
-                    [
-                        req.session.userId
-                    ]
-                );
-
-            if (rows.length === 0) {
-
-                return res.status(404).json({
-                    success: false,
-                    message:
-                        "User not found"
-                });
-            }
-
-            res.json({
-                success: true,
-                user: rows[0]
-            });
-
-        } catch (error) {
-
-            console.error(
-                "ME API error:",
-                error
-            );
-
-            res.status(500).json({
+app.get("/api/me", requireLogin, async (req, res) => {
+    try {
+        const user = await findUserById(req.session.userId);
+        if (!user) {
+            return res.status(404).json({
                 success: false,
-                message:
-                    "Unable to get profile"
+                message: "User not found"
             });
         }
+
+        res.json({
+            success: true,
+            loggedIn: true,
+            user
+        });
+    } catch (error) {
+        console.error("ME API error:", error);
+        res.status(500).json({
+            success: false,
+            message: "Unable to get profile"
+        });
     }
-);
+});
 
 /* =========================================================
    REGISTER
 ========================================================= */
 
-app.post(
-    "/api/register",
-    async (req, res) => {
-
-        try {
-
-            const {
-                name,
-                email,
-                password,
-                role
-            } = req.body;
-
-            if (
-                !name ||
-                !email ||
-                !password
-            ) {
-
-                return res.status(400).json({
-                    success: false,
-                    message:
-                        "Name, email and password are required"
-                });
-            }
-
-            if (password.length < 6) {
-
-                return res.status(400).json({
-                    success: false,
-                    message:
-                        "Password must contain at least 6 characters"
-                });
-            }
-
-            const cleanName =
-                String(name).trim();
-
-            const cleanEmail =
-                String(email)
-                    .trim()
-                    .toLowerCase();
-
-            const allowedRoles = [
-                "citizen",
-                "volunteer",
-                "admin"
-            ];
-
-            const selectedRole =
-                allowedRoles.includes(
-                    String(role).toLowerCase()
-                )
-                    ? String(role).toLowerCase()
-                    : "citizen";
-
-            const [existingUsers] =
-                await pool.query(
-                    `
-                    SELECT id
-                    FROM users
-                    WHERE email = ?
-                    LIMIT 1
-                    `,
-                    [
-                        cleanEmail
-                    ]
-                );
-
-            if (
-                existingUsers.length > 0
-            ) {
-
-                return res.status(409).json({
-                    success: false,
-                    message:
-                        "Email already registered"
-                });
-            }
-
-            const hashedPassword =
-                await bcrypt.hash(
-                    password,
-                    10
-                );
-
-            await pool.query(
-                `
-                INSERT INTO users
-                (
-                    name,
-                    email,
-                    password,
-                    role
-                )
-                VALUES (?, ?, ?, ?)
-                `,
-                [
-                    cleanName,
-                    cleanEmail,
-                    hashedPassword,
-                    selectedRole
-                ]
-            );
-
-            res.status(201).json({
-                success: true,
-                message:
-                    "Registration successful"
-            });
-
-        } catch (error) {
-
-            console.error(
-                "Register error:",
-                error
-            );
-
-            res.status(500).json({
+app.post("/api/register", async (req, res) => {
+    try {
+        const { name, email, password, role } = req.body;
+        if (!name || !email || !password) {
+            return res.status(400).json({
                 success: false,
-                message:
-                    "Registration failed"
+                message: "Name, email and password are required"
             });
         }
+
+        if (password.length < 6) {
+            return res.status(400).json({
+                success: false,
+                message: "Password must contain at least 6 characters"
+            });
+        }
+
+        const cleanName = String(name).trim();
+        const cleanEmail = String(email).trim().toLowerCase();
+        const allowedRoles = ["citizen", "volunteer", "admin"];
+        const normalizedRole = String(role || "").toLowerCase();
+        const selectedRole = allowedRoles.includes(normalizedRole)
+            ? normalizedRole
+            : "citizen";
+
+        const existingUser = await collection("users").findOne(
+            { email: cleanEmail },
+            { projection: { id: 1 } }
+        );
+        if (existingUser) {
+            return res.status(409).json({
+                success: false,
+                message: "Email already registered"
+            });
+        }
+
+        const hashedPassword = await bcrypt.hash(password, 10);
+        await collection("users").insertOne({
+            id: await nextNumericId("users"),
+            name: cleanName,
+            email: cleanEmail,
+            password: hashedPassword,
+            role: selectedRole,
+            created_at: new Date()
+        });
+
+        res.status(201).json({
+            success: true,
+            message: "Registration successful"
+        });
+    } catch (error) {
+        console.error("Register error:", error);
+        res.status(500).json({
+            success: false,
+            message: "Registration failed"
+        });
     }
-);
+});
 
 /* =========================================================
    LOGIN
 ========================================================= */
 
-app.post(
-    "/api/login",
-    async (req, res) => {
-
-        try {
-
-            const {
-                email,
-                password
-            } = req.body;
-
-            if (
-                !email ||
-                !password
-            ) {
-
-                return res.status(400).json({
-                    success: false,
-                    message:
-                        "Email and password are required"
-                });
-            }
-
-            const cleanEmail =
-                String(email)
-                    .trim()
-                    .toLowerCase();
-
-            const [rows] =
-                await pool.query(
-                    `
-                    SELECT
-                        id,
-                        name,
-                        email,
-                        password,
-                        role,
-                        created_at
-                    FROM users
-                    WHERE email = ?
-                    LIMIT 1
-                    `,
-                    [
-                        cleanEmail
-                    ]
-                );
-
-            if (rows.length === 0) {
-
-                return res.status(401).json({
-                    success: false,
-                    message:
-                        "Invalid email or password"
-                });
-            }
-
-            const user = rows[0];
-
-            const passwordMatch =
-                await bcrypt.compare(
-                    password,
-                    user.password
-                );
-
-            if (!passwordMatch) {
-
-                return res.status(401).json({
-                    success: false,
-                    message:
-                        "Invalid email or password"
-                });
-            }
-
-            req.session.regenerate(
-                (sessionError) => {
-
-                    if (sessionError) {
-
-                        console.error(
-                            "Session regenerate error:",
-                            sessionError
-                        );
-
-                        return res.status(500).json({
-                            success: false,
-                            message:
-                                "Login session error"
-                        });
-                    }
-
-                    req.session.userId =
-                        user.id;
-
-                    req.session.user = {
-                        id: user.id,
-                        name: user.name,
-                        email: user.email,
-                        role: user.role
-                    };
-
-                    req.session.save(
-                        (saveError) => {
-
-                            if (saveError) {
-
-                                console.error(
-                                    "Session save error:",
-                                    saveError
-                                );
-
-                                return res.status(500).json({
-                                    success: false,
-                                    message:
-                                        "Unable to save login session"
-                                });
-                            }
-
-                            res.json({
-                                success: true,
-                                message:
-                                    "Login successful",
-                                user:
-                                    req.session.user
-                            });
-                        }
-                    );
-                }
-            );
-
-        } catch (error) {
-
-            console.error(
-                "Login error:",
-                error
-            );
-
-            res.status(500).json({
+app.post("/api/login", async (req, res) => {
+    try {
+        const { email, password } = req.body;
+        if (!email || !password) {
+            return res.status(400).json({
                 success: false,
-                message:
-                    "Login failed"
+                message: "Email and password are required"
             });
         }
+
+        const cleanEmail = String(email).trim().toLowerCase();
+        const user = await collection("users").findOne({
+            email: cleanEmail
+        });
+        if (!user || !(await bcrypt.compare(password, user.password))) {
+            return res.status(401).json({
+                success: false,
+                message: "Invalid email or password"
+            });
+        }
+
+        req.session.regenerate(sessionError => {
+            if (sessionError) {
+                console.error("Session regenerate error:", sessionError);
+                return res.status(500).json({
+                    success: false,
+                    message: "Login session error"
+                });
+            }
+
+            req.session.userId = user.id;
+            req.session.user = {
+                id: user.id,
+                name: user.name,
+                email: user.email,
+                role: user.role
+            };
+
+            req.session.save(saveError => {
+                if (saveError) {
+                    console.error("Session save error:", saveError);
+                    return res.status(500).json({
+                        success: false,
+                        message: "Unable to save login session"
+                    });
+                }
+
+                res.json({
+                    success: true,
+                    message: "Login successful",
+                    user: req.session.user
+                });
+            });
+        });
+    } catch (error) {
+        console.error("Login error:", error);
+        res.status(500).json({
+            success: false,
+            message: "Login failed"
+        });
     }
-);
+});
 
 /* =========================================================
    LOGOUT
 ========================================================= */
 
-app.post(
-    "/api/logout",
-    (req, res) => {
+app.post("/api/logout", (req, res) => {
+    req.session.destroy(error => {
+        if (error) {
+            console.error("Logout error:", error);
+            return res.status(500).json({
+                success: false,
+                message: "Logout failed"
+            });
+        }
 
-        req.session.destroy(
-            (error) => {
+        res.clearCookie("connect.sid");
+        res.json({
+            success: true,
+            message: "Logged out successfully"
+        });
+    });
+});
 
-                if (error) {
+/* =========================================================
+   PASSWORD MANAGEMENT
+========================================================= */
 
-                    console.error(
-                        "Logout error:",
-                        error
-                    );
+app.post("/api/change-password", requireLogin, async (req, res) => {
+    try {
+        const { currentPassword, newPassword, confirmPassword } = req.body;
+        if (!currentPassword || !newPassword || !confirmPassword) {
+            return res.status(400).json({
+                success: false,
+                message: "All password fields are required"
+            });
+        }
+        if (newPassword !== confirmPassword) {
+            return res.status(400).json({
+                success: false,
+                message: "New passwords do not match"
+            });
+        }
+        if (newPassword.length < 6) {
+            return res.status(400).json({
+                success: false,
+                message: "New password must contain at least 6 characters"
+            });
+        }
+        if (currentPassword === newPassword) {
+            return res.status(400).json({
+                success: false,
+                message:
+                    "New password must be different from current password"
+            });
+        }
 
-                    return res.status(500).json({
-                        success: false,
-                        message:
-                            "Logout failed"
-                    });
-                }
+        const user = await collection("users").findOne({
+            id: req.session.userId
+        });
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: "User not found"
+            });
+        }
+        if (!(await bcrypt.compare(currentPassword, user.password))) {
+            return res.status(401).json({
+                success: false,
+                message: "Current password is incorrect"
+            });
+        }
 
-                res.clearCookie(
-                    "connect.sid"
-                );
-
-                res.json({
-                    success: true,
-                    message:
-                        "Logged out successfully"
-                });
-            }
+        await collection("users").updateOne(
+            { id: req.session.userId },
+            { $set: { password: await bcrypt.hash(newPassword, 10) } }
         );
+        res.json({
+            success: true,
+            message: "Password changed successfully"
+        });
+    } catch (error) {
+        console.error("Change password error:", error);
+        res.status(500).json({
+            success: false,
+            message: "Unable to change password"
+        });
     }
-);
+});
 
-/* =========================================================
-   CHANGE PASSWORD
-========================================================= */
-
-app.post(
-    "/api/change-password",
-    requireLogin,
-    async (req, res) => {
-
-        try {
-
-            const {
-                currentPassword,
-                newPassword,
-                confirmPassword
-            } = req.body;
-
-            if (
-                !currentPassword ||
-                !newPassword ||
-                !confirmPassword
-            ) {
-
-                return res.status(400).json({
-                    success: false,
-                    message:
-                        "All password fields are required"
-                });
-            }
-
-            if (
-                newPassword !==
-                confirmPassword
-            ) {
-
-                return res.status(400).json({
-                    success: false,
-                    message:
-                        "New passwords do not match"
-                });
-            }
-
-            if (
-                newPassword.length < 6
-            ) {
-
-                return res.status(400).json({
-                    success: false,
-                    message:
-                        "New password must contain at least 6 characters"
-                });
-            }
-
-            if (
-                currentPassword ===
-                newPassword
-            ) {
-
-                return res.status(400).json({
-                    success: false,
-                    message:
-                        "New password must be different from current password"
-                });
-            }
-
-            const [rows] =
-                await pool.query(
-                    `
-                    SELECT
-                        id,
-                        password
-                    FROM users
-                    WHERE id = ?
-                    LIMIT 1
-                    `,
-                    [
-                        req.session.userId
-                    ]
-                );
-
-            if (rows.length === 0) {
-
-                return res.status(404).json({
-                    success: false,
-                    message:
-                        "User not found"
-                });
-            }
-
-            const user = rows[0];
-
-            const currentPasswordMatch =
-                await bcrypt.compare(
-                    currentPassword,
-                    user.password
-                );
-
-            if (
-                !currentPasswordMatch
-            ) {
-
-                return res.status(401).json({
-                    success: false,
-                    message:
-                        "Current password is incorrect"
-                });
-            }
-
-            const newHashedPassword =
-                await bcrypt.hash(
-                    newPassword,
-                    10
-                );
-
-            await pool.query(
-                `
-                UPDATE users
-                SET password = ?
-                WHERE id = ?
-                `,
-                [
-                    newHashedPassword,
-                    req.session.userId
-                ]
-            );
-
-            res.json({
-                success: true,
-                message:
-                    "Password changed successfully"
-            });
-
-        } catch (error) {
-
-            console.error(
-                "Change password error:",
-                error
-            );
-
-            res.status(500).json({
+app.post("/api/reset-password", async (req, res) => {
+    try {
+        const { email, newPassword, confirmPassword } = req.body;
+        if (!email || !newPassword || !confirmPassword) {
+            return res.status(400).json({
                 success: false,
-                message:
-                    "Unable to change password"
+                message: "Email and all password fields are required"
             });
         }
-    }
-);
-
-/* =========================================================
-   PASSWORD RESET
-========================================================= */
-
-app.post(
-    "/api/reset-password",
-    async (req, res) => {
-
-        try {
-
-            const {
-                email,
-                newPassword,
-                confirmPassword
-            } = req.body;
-
-            if (
-                !email ||
-                !newPassword ||
-                !confirmPassword
-            ) {
-
-                return res.status(400).json({
-                    success: false,
-                    message:
-                        "Email and all password fields are required"
-                });
-            }
-
-            if (
-                newPassword !==
-                confirmPassword
-            ) {
-
-                return res.status(400).json({
-                    success: false,
-                    message:
-                        "Passwords do not match"
-                });
-            }
-
-            if (
-                newPassword.length < 6
-            ) {
-
-                return res.status(400).json({
-                    success: false,
-                    message:
-                        "Password must contain at least 6 characters"
-                });
-            }
-
-            const cleanEmail =
-                String(email)
-                    .trim()
-                    .toLowerCase();
-
-            const [rows] =
-                await pool.query(
-                    `
-                    SELECT id
-                    FROM users
-                    WHERE email = ?
-                    LIMIT 1
-                    `,
-                    [
-                        cleanEmail
-                    ]
-                );
-
-            if (rows.length === 0) {
-
-                return res.status(404).json({
-                    success: false,
-                    message:
-                        "No account found with this email"
-                });
-            }
-
-            const hashedPassword =
-                await bcrypt.hash(
-                    newPassword,
-                    10
-                );
-
-            await pool.query(
-                `
-                UPDATE users
-                SET password = ?
-                WHERE id = ?
-                `,
-                [
-                    hashedPassword,
-                    rows[0].id
-                ]
-            );
-
-            res.json({
-                success: true,
-                message:
-                    "Password reset successfully"
-            });
-
-        } catch (error) {
-
-            console.error(
-                "Reset password error:",
-                error
-            );
-
-            res.status(500).json({
+        if (newPassword !== confirmPassword) {
+            return res.status(400).json({
                 success: false,
-                message:
-                    "Unable to reset password"
+                message: "Passwords do not match"
             });
         }
+        if (newPassword.length < 6) {
+            return res.status(400).json({
+                success: false,
+                message: "Password must contain at least 6 characters"
+            });
+        }
+
+        const cleanEmail = String(email).trim().toLowerCase();
+        const user = await collection("users").findOne({
+            email: cleanEmail
+        });
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: "No account found with this email"
+            });
+        }
+
+        await collection("users").updateOne(
+            { id: user.id },
+            { $set: { password: await bcrypt.hash(newPassword, 10) } }
+        );
+        res.json({
+            success: true,
+            message: "Password reset successfully"
+        });
+    } catch (error) {
+        console.error("Reset password error:", error);
+        res.status(500).json({
+            success: false,
+            message: "Unable to reset password"
+        });
     }
-);
+});
 
 /* =========================================================
    TASKS
 ========================================================= */
 
-app.get(
-    "/api/tasks",
-    async (req, res) => {
-
-        try {
-
-            const userId =
-                req.session.userId || 0;
-
-            const [rows] =
-                await pool.query(
-                    `
-                    SELECT
-                        t.id,
-                        t.title,
-                        t.description,
-                        t.points,
-                        t.icon,
-                        CASE
-                            WHEN ut.id IS NOT NULL
-                            THEN 1
-                            ELSE 0
-                        END AS completed
-                    FROM tasks t
-                    LEFT JOIN user_tasks ut
-                        ON ut.task_id = t.id
-                        AND ut.user_id = ?
-                    ORDER BY t.id ASC
-                    `,
-                    [
-                        userId
-                    ]
-                );
-
-            res.json({
-                success: true,
-                tasks: rows
-            });
-
-        } catch (error) {
-
-            console.error(
-                "Tasks error:",
-                error
-            );
-
-            res.status(500).json({
-                success: false,
-                message:
-                    "Unable to load tasks"
-            });
-        }
-    }
-);
-
-/* =========================================================
-   TASK PROGRESS
-========================================================= */
-
-app.get(
-    "/api/tasks/progress",
-    requireLogin,
-    async (req, res) => {
-
-        try {
-
-            const [rows] =
-                await pool.query(
-                    `
-                    SELECT
-                        COUNT(*) AS completed,
-                        COALESCE(
-                            SUM(t.points),
-                            0
-                        ) AS points
-                    FROM user_tasks ut
-                    INNER JOIN tasks t
-                        ON t.id = ut.task_id
-                    WHERE ut.user_id = ?
-                    `,
-                    [
-                        req.session.userId
-                    ]
-                );
-
-            const completed =
-                Number(
-                    rows[0].completed || 0
-                );
-
-            const points =
-                Number(
-                    rows[0].points || 0
-                );
-
-            res.json({
-                success: true,
-                completed,
-                total: 6,
-                points
-            });
-
-        } catch (error) {
-
-            console.error(
-                "Task progress error:",
-                error
-            );
-
-            res.status(500).json({
-                success: false,
-                message:
-                    "Unable to load task progress"
-            });
-        }
-    }
-);
-
-/* =========================================================
-   COMPLETE TASK
-========================================================= */
-
-app.post(
-    "/api/tasks/:id/complete",
-    requireLogin,
-    async (req, res) => {
-
-        try {
-
-            const taskId =
-                Number(req.params.id);
-
-            if (
-                !Number.isInteger(taskId) ||
-                taskId <= 0
-            ) {
-
-                return res.status(400).json({
-                    success: false,
-                    message:
-                        "Invalid task ID"
-                });
-            }
-
-            const [taskRows] =
-                await pool.query(
-                    `
-                    SELECT
-                        id,
-                        title,
-                        points
-                    FROM tasks
-                    WHERE id = ?
-                    LIMIT 1
-                    `,
-                    [
-                        taskId
-                    ]
-                );
-
-            if (
-                taskRows.length === 0
-            ) {
-
-                return res.status(404).json({
-                    success: false,
-                    message:
-                        "Task not found"
-                });
-            }
-
-            const [existingRows] =
-                await pool.query(
-                    `
-                    SELECT id
-                    FROM user_tasks
-                    WHERE user_id = ?
-                      AND task_id = ?
-                    LIMIT 1
-                    `,
-                    [
-                        req.session.userId,
-                        taskId
-                    ]
-                );
-
-            if (
-                existingRows.length > 0
-            ) {
-
-                return res.json({
-                    success: true,
-                    alreadyCompleted: true,
-                    message:
-                        "Task already completed"
-                });
-            }
-
-            await pool.query(
-                `
-                INSERT INTO user_tasks
+app.get("/api/tasks", async (req, res) => {
+    try {
+        const userId = req.session.userId;
+        const completedTaskIds = userId
+            ? new Set(
                 (
-                    user_id,
-                    task_id
-                )
-                VALUES (?, ?)
-                `,
-                [
-                    req.session.userId,
-                    taskId
-                ]
-            );
+                    await collection("user_tasks")
+                        .find({ user_id: userId }, { projection: { task_id: 1 } })
+                        .toArray()
+                ).map(item => item.task_id)
+            )
+            : new Set();
 
-            res.json({
-                success: true,
-                message:
-                    "Task completed successfully",
-                points:
-                    taskRows[0].points
-            });
+        const tasks = await collection("tasks")
+            .find({})
+            .sort({ id: 1 })
+            .toArray();
+        res.json({
+            success: true,
+            tasks: tasks.map(task => ({
+                ...publicDocument(task),
+                completed: completedTaskIds.has(task.id) ? 1 : 0
+            }))
+        });
+    } catch (error) {
+        console.error("Tasks error:", error);
+        res.status(500).json({
+            success: false,
+            message: "Unable to load tasks"
+        });
+    }
+});
 
-        } catch (error) {
+app.get("/api/tasks/progress", requireLogin, async (req, res) => {
+    try {
+        const completedTasks = await collection("user_tasks")
+            .find({ user_id: req.session.userId })
+            .toArray();
+        const taskIds = completedTasks.map(item => item.task_id);
+        const tasks = await collection("tasks")
+            .find({ id: { $in: taskIds } }, { projection: { id: 1, points: 1 } })
+            .toArray();
+        const pointsById = new Map(tasks.map(task => [task.id, Number(task.points) || 0]));
 
-            console.error(
-                "Complete task error:",
-                error
-            );
+        res.json({
+            success: true,
+            completed: completedTasks.length,
+            total: 6,
+            points: completedTasks.reduce(
+                (total, item) => total + (pointsById.get(item.task_id) || 0),
+                0
+            )
+        });
+    } catch (error) {
+        console.error("Task progress error:", error);
+        res.status(500).json({
+            success: false,
+            message: "Unable to load task progress"
+        });
+    }
+});
 
-            res.status(500).json({
+app.post("/api/tasks/:id/complete", requireLogin, async (req, res) => {
+    try {
+        const taskId = Number(req.params.id);
+        if (!Number.isInteger(taskId) || taskId <= 0) {
+            return res.status(400).json({
                 success: false,
-                message:
-                    "Unable to complete task"
+                message: "Invalid task ID"
             });
         }
+
+        const task = await collection("tasks").findOne({ id: taskId });
+        if (!task) {
+            return res.status(404).json({
+                success: false,
+                message: "Task not found"
+            });
+        }
+
+        const existing = await collection("user_tasks").findOne({
+            user_id: req.session.userId,
+            task_id: taskId
+        });
+        if (existing) {
+            return res.json({
+                success: true,
+                alreadyCompleted: true,
+                message: "Task already completed"
+            });
+        }
+
+        await collection("user_tasks").insertOne({
+            id: await nextNumericId("user_tasks"),
+            user_id: req.session.userId,
+            task_id: taskId,
+            completed_at: new Date()
+        });
+        res.json({
+            success: true,
+            message: "Task completed successfully",
+            points: task.points
+        });
+    } catch (error) {
+        console.error("Complete task error:", error);
+        res.status(500).json({
+            success: false,
+            message: "Unable to complete task"
+        });
     }
-);
+});
 
 /* =========================================================
    CAMPAIGNS
 ========================================================= */
 
-app.get(
-    "/api/campaigns",
-    async (req, res) => {
-
-        try {
-
-            const [rows] =
-                await pool.query(
-                    `
-                    SELECT
-                        c.id,
-                        c.title,
-                        c.description,
-                        c.location,
-                        c.campaign_date,
-                        c.image,
-                        c.max_participants,
-                        COUNT(cp.id)
-                            AS participant_count
-                    FROM campaigns c
-                    LEFT JOIN campaign_participants cp
-                        ON cp.campaign_id = c.id
-                    GROUP BY
-                        c.id,
-                        c.title,
-                        c.description,
-                        c.location,
-                        c.campaign_date,
-                        c.image,
-                        c.max_participants
-                    ORDER BY
-                        c.campaign_date ASC
-                    `
-                );
-
-            res.json({
-                success: true,
-                campaigns: rows
-            });
-
-        } catch (error) {
-
-            console.error(
-                "Campaigns error:",
-                error
+app.get("/api/campaigns", async (req, res) => {
+    try {
+        const campaigns = await collection("campaigns")
+            .find({})
+            .sort({ campaign_date: 1 })
+            .toArray();
+        const campaignIds = campaigns.map(campaign => campaign.id);
+        const participants = await collection("campaign_participants")
+            .find({ campaign_id: { $in: campaignIds } })
+            .toArray();
+        const counts = participants.reduce((result, participant) => {
+            result.set(
+                participant.campaign_id,
+                (result.get(participant.campaign_id) || 0) + 1
             );
+            return result;
+        }, new Map());
 
-            res.status(500).json({
+        res.json({
+            success: true,
+            campaigns: campaigns.map(campaign => ({
+                ...publicDocument(campaign),
+                participant_count: counts.get(campaign.id) || 0
+            }))
+        });
+    } catch (error) {
+        console.error("Campaigns error:", error);
+        res.status(500).json({
+            success: false,
+            message: "Unable to load campaigns"
+        });
+    }
+});
+
+app.post("/api/campaigns/:id/join", requireLogin, async (req, res) => {
+    try {
+        const campaignId = Number(req.params.id);
+        if (!Number.isInteger(campaignId) || campaignId <= 0) {
+            return res.status(400).json({
                 success: false,
-                message:
-                    "Unable to load campaigns"
+                message: "Invalid campaign ID"
             });
         }
+
+        const campaign = await collection("campaigns").findOne({
+            id: campaignId
+        });
+        if (!campaign) {
+            return res.status(404).json({
+                success: false,
+                message: "Campaign not found"
+            });
+        }
+
+        const participants = collection("campaign_participants");
+        const existing = await participants.findOne({
+            campaign_id: campaignId,
+            user_id: req.session.userId
+        });
+        if (existing) {
+            return res.json({
+                success: true,
+                alreadyJoined: true,
+                message: "You already joined this campaign"
+            });
+        }
+
+        const currentCount = await participants.countDocuments({
+            campaign_id: campaignId
+        });
+        const maxParticipants = Number(campaign.max_participants || 100);
+        if (currentCount >= maxParticipants) {
+            return res.status(400).json({
+                success: false,
+                message: "Campaign is full"
+            });
+        }
+
+        await participants.insertOne({
+            id: await nextNumericId("campaign_participants"),
+            campaign_id: campaignId,
+            user_id: req.session.userId,
+            joined_at: new Date()
+        });
+        res.json({
+            success: true,
+            message: "Campaign joined successfully"
+        });
+    } catch (error) {
+        console.error("Join campaign error:", error);
+        res.status(500).json({
+            success: false,
+            message: "Unable to join campaign"
+        });
     }
-);
+});
+
+app.get("/api/campaigns/:id/status", requireLogin, async (req, res) => {
+    try {
+        const campaignId = Number(req.params.id);
+        const participant = await collection("campaign_participants").findOne({
+            campaign_id: campaignId,
+            user_id: req.session.userId
+        });
+        res.json({
+            success: true,
+            joined: Boolean(participant)
+        });
+    } catch (error) {
+        console.error("Campaign status error:", error);
+        res.status(500).json({
+            success: false,
+            message: "Unable to check campaign status"
+        });
+    }
+});
 
 /* =========================================================
-   JOIN CAMPAIGN
+   RESOURCES AND CONTACT
 ========================================================= */
 
-app.post(
-    "/api/campaigns/:id/join",
-    requireLogin,
-    async (req, res) => {
+app.get("/api/resources", async (req, res) => {
+    try {
+        const resources = await collection("resources")
+            .find({})
+            .sort({ id: -1 })
+            .toArray();
+        res.json({
+            success: true,
+            resources: publicDocuments(resources)
+        });
+    } catch (error) {
+        console.error("Resources error:", error);
+        res.status(500).json({
+            success: false,
+            message: "Unable to load resources"
+        });
+    }
+});
 
-        try {
-
-            const campaignId =
-                Number(req.params.id);
-
-            if (
-                !Number.isInteger(
-                    campaignId
-                ) ||
-                campaignId <= 0
-            ) {
-
-                return res.status(400).json({
-                    success: false,
-                    message:
-                        "Invalid campaign ID"
-                });
-            }
-
-            const [campaignRows] =
-                await pool.query(
-                    `
-                    SELECT
-                        id,
-                        title,
-                        max_participants
-                    FROM campaigns
-                    WHERE id = ?
-                    LIMIT 1
-                    `,
-                    [
-                        campaignId
-                    ]
-                );
-
-            if (
-                campaignRows.length === 0
-            ) {
-
-                return res.status(404).json({
-                    success: false,
-                    message:
-                        "Campaign not found"
-                });
-            }
-
-            const campaign =
-                campaignRows[0];
-
-            const [existingRows] =
-                await pool.query(
-                    `
-                    SELECT id
-                    FROM campaign_participants
-                    WHERE campaign_id = ?
-                      AND user_id = ?
-                    LIMIT 1
-                    `,
-                    [
-                        campaignId,
-                        req.session.userId
-                    ]
-                );
-
-            if (
-                existingRows.length > 0
-            ) {
-
-                return res.json({
-                    success: true,
-                    alreadyJoined: true,
-                    message:
-                        "You already joined this campaign"
-                });
-            }
-
-            const [countRows] =
-                await pool.query(
-                    `
-                    SELECT
-                        COUNT(*) AS total
-                    FROM campaign_participants
-                    WHERE campaign_id = ?
-                    `,
-                    [
-                        campaignId
-                    ]
-                );
-
-            const currentCount =
-                Number(
-                    countRows[0].total || 0
-                );
-
-            const maxParticipants =
-                Number(
-                    campaign.max_participants ||
-                    100
-                );
-
-            if (
-                currentCount >=
-                maxParticipants
-            ) {
-
-                return res.status(400).json({
-                    success: false,
-                    message:
-                        "Campaign is full"
-                });
-            }
-
-            await pool.query(
-                `
-                INSERT INTO campaign_participants
-                (
-                    campaign_id,
-                    user_id
-                )
-                VALUES (?, ?)
-                `,
-                [
-                    campaignId,
-                    req.session.userId
-                ]
-            );
-
-            res.json({
-                success: true,
-                message:
-                    "Campaign joined successfully"
-            });
-
-        } catch (error) {
-
-            console.error(
-                "Join campaign error:",
-                error
-            );
-
-            res.status(500).json({
+app.post("/api/contact", async (req, res) => {
+    try {
+        const { name, email, phone, subject, message } = req.body;
+        if (!name || !email || !subject || !message) {
+            return res.status(400).json({
                 success: false,
-                message:
-                    "Unable to join campaign"
+                message: "Please fill all required fields"
             });
         }
+
+        await collection("contact_messages").insertOne({
+            id: await nextNumericId("contact_messages"),
+            name,
+            email,
+            phone: phone || null,
+            subject,
+            message,
+            created_at: new Date()
+        });
+        res.json({
+            success: true,
+            message: "Message sent successfully"
+        });
+    } catch (error) {
+        console.error("Contact error:", error);
+        res.status(500).json({
+            success: false,
+            message: "Unable to send message"
+        });
     }
-);
-
-/* =========================================================
-   CAMPAIGN STATUS
-========================================================= */
-
-app.get(
-    "/api/campaigns/:id/status",
-    requireLogin,
-    async (req, res) => {
-
-        try {
-
-            const campaignId =
-                Number(req.params.id);
-
-            const [rows] =
-                await pool.query(
-                    `
-                    SELECT id
-                    FROM campaign_participants
-                    WHERE campaign_id = ?
-                      AND user_id = ?
-                    LIMIT 1
-                    `,
-                    [
-                        campaignId,
-                        req.session.userId
-                    ]
-                );
-
-            res.json({
-                success: true,
-                joined:
-                    rows.length > 0
-            });
-
-        } catch (error) {
-
-            console.error(
-                "Campaign status error:",
-                error
-            );
-
-            res.status(500).json({
-                success: false,
-                message:
-                    "Unable to check campaign status"
-            });
-        }
-    }
-);
-
-/* =========================================================
-   RESOURCES
-========================================================= */
-
-app.get(
-    "/api/resources",
-    async (req, res) => {
-
-        try {
-
-            const [rows] =
-                await pool.query(
-                    `
-                    SELECT *
-                    FROM resources
-                    ORDER BY id DESC
-                    `
-                );
-
-            res.json({
-                success: true,
-                resources: rows
-            });
-
-        } catch (error) {
-
-            console.error(
-                "Resources error:",
-                error
-            );
-
-            res.status(500).json({
-                success: false,
-                message:
-                    "Unable to load resources"
-            });
-        }
-    }
-);
-
-/* =========================================================
-   CONTACT
-========================================================= */
-
-app.post(
-    "/api/contact",
-    async (req, res) => {
-
-        try {
-
-            const {
-                name,
-                email,
-                phone,
-                subject,
-                message
-            } = req.body;
-
-            if (
-                !name ||
-                !email ||
-                !subject ||
-                !message
-            ) {
-
-                return res.status(400).json({
-                    success: false,
-                    message:
-                        "Please fill all required fields"
-                });
-            }
-
-            await pool.query(
-                `
-                INSERT INTO contact_messages
-                (
-                    name,
-                    email,
-                    phone,
-                    subject,
-                    message
-                )
-                VALUES (?, ?, ?, ?, ?)
-                `,
-                [
-                    name,
-                    email,
-                    phone || null,
-                    subject,
-                    message
-                ]
-            );
-
-            res.json({
-                success: true,
-                message:
-                    "Message sent successfully"
-            });
-
-        } catch (error) {
-
-            console.error(
-                "Contact error:",
-                error
-            );
-
-            res.status(500).json({
-                success: false,
-                message:
-                    "Unable to send message"
-            });
-        }
-    }
-);
+});
 
 /* =========================================================
    PLASTIC COLLECTIONS
 ========================================================= */
 
-app.post(
-    "/api/plastic-collections",
-    requireLogin,
-    async (req, res) => {
-
-        try {
-
-            const {
-                location,
-                kilograms,
-                plastic_type,
-                collected_at
-            } = req.body;
-
-            if (
-                !location ||
-                kilograms === undefined ||
-                !plastic_type ||
-                !collected_at
-            ) {
-
-                return res.status(400).json({
-                    success: false,
-                    message:
-                        "All collection fields are required"
-                });
-            }
-
-            const kg =
-                Number(kilograms);
-
-            if (
-                !Number.isFinite(kg) ||
-                kg <= 0
-            ) {
-
-                return res.status(400).json({
-                    success: false,
-                    message:
-                        "Kilograms must be greater than 0"
-                });
-            }
-
-            await pool.query(
-                `
-                INSERT INTO plastic_collections
-                (
-                    user_id,
-                    location,
-                    kilograms,
-                    plastic_type,
-                    collected_at
-                )
-                VALUES (?, ?, ?, ?, ?)
-                `,
-                [
-                    req.session.userId,
-                    location,
-                    kg,
-                    plastic_type,
-                    collected_at
-                ]
-            );
-
-            res.json({
-                success: true,
-                message:
-                    "Plastic collection saved successfully"
-            });
-
-        } catch (error) {
-
-            console.error(
-                "Plastic collection save error:",
-                error
-            );
-
-            res.status(500).json({
-                success: false,
-                message:
-                    "Unable to save plastic collection"
-            });
-        }
-    }
-);
-
-/* =========================================================
-   COLLECTIONS COMPATIBILITY API
-========================================================= */
-
-app.post(
-    "/api/collections",
-    requireLogin,
-    async (req, res) => {
-
-        try {
-
-            const {
-                location,
-                kilograms,
-                plastic_type,
-                collected_at
-            } = req.body;
-
-            if (
-                !location ||
-                kilograms === undefined ||
-                !plastic_type ||
-                !collected_at
-            ) {
-
-                return res.status(400).json({
-                    success: false,
-                    message:
-                        "All collection fields are required"
-                });
-            }
-
-            const kg =
-                Number(kilograms);
-
-            if (
-                !Number.isFinite(kg) ||
-                kg <= 0
-            ) {
-
-                return res.status(400).json({
-                    success: false,
-                    message:
-                        "Invalid kilograms"
-                });
-            }
-
-            await pool.query(
-                `
-                INSERT INTO plastic_collections
-                (
-                    user_id,
-                    location,
-                    kilograms,
-                    plastic_type,
-                    collected_at
-                )
-                VALUES (?, ?, ?, ?, ?)
-                `,
-                [
-                    req.session.userId,
-                    location,
-                    kg,
-                    plastic_type,
-                    collected_at
-                ]
-            );
-
-            res.json({
-                success: true,
-                message:
-                    "Collection saved successfully"
-            });
-
-        } catch (error) {
-
-            console.error(
-                "Collections compatibility error:",
-                error
-            );
-
-            res.status(500).json({
-                success: false,
-                message:
-                    "Unable to save collection"
-            });
-        }
-    }
-);
-
-/* =========================================================
-   GET PLASTIC COLLECTIONS
-========================================================= */
-
-app.get(
-    "/api/plastic-collections",
-    requireLogin,
-    async (req, res) => {
-
-        try {
-
-            const [rows] =
-                await pool.query(
-                    `
-                    SELECT
-                        id,
-                        location,
-                        kilograms,
-                        plastic_type,
-                        collected_at,
-                        created_at
-                    FROM plastic_collections
-                    WHERE user_id = ?
-                    ORDER BY
-                        collected_at DESC,
-                        id DESC
-                    `,
-                    [
-                        req.session.userId
-                    ]
-                );
-
-            res.json({
-                success: true,
-                collections: rows
-            });
-
-        } catch (error) {
-
-            console.error(
-                "Get collections error:",
-                error
-            );
-
-            res.status(500).json({
-                success: false,
-                message:
-                    "Unable to load collections"
-            });
-        }
-    }
-);
-
-/* =========================================================
-   DELETE PLASTIC COLLECTION
-========================================================= */
-
-app.delete(
-    "/api/plastic-collections/:id",
-    requireLogin,
-    async (req, res) => {
-
-        try {
-
-            const collectionId =
-                Number(req.params.id);
-
-            const [result] =
-                await pool.query(
-                    `
-                    DELETE FROM plastic_collections
-                    WHERE id = ?
-                      AND user_id = ?
-                    `,
-                    [
-                        collectionId,
-                        req.session.userId
-                    ]
-                );
-
-            if (
-                result.affectedRows === 0
-            ) {
-
-                return res.status(404).json({
-                    success: false,
-                    message:
-                        "Collection not found"
-                });
-            }
-
-            res.json({
-                success: true,
-                message:
-                    "Collection deleted successfully"
-            });
-
-        } catch (error) {
-
-            console.error(
-                "Delete collection error:",
-                error
-            );
-
-            res.status(500).json({
-                success: false,
-                message:
-                    "Unable to delete collection"
-            });
-        }
-    }
-);
-
-/* =========================================================
-   REPORT SUMMARY
-========================================================= */
-
-app.get(
-    "/api/reports/summary",
-    async (req, res) => {
-
-        try {
-
-            const [plasticRows] =
-                await pool.query(
-                    `
-                    SELECT
-                        COALESCE(
-                            SUM(kilograms),
-                            0
-                        ) AS totalPlastic
-                    FROM plastic_collections
-                    `
-                );
-
-            const [volunteerRows] =
-                await pool.query(
-                    `
-                    SELECT
-                        COUNT(*) AS volunteers
-                    FROM users
-                    WHERE role = 'volunteer'
-                    `
-                );
-
-            const [participantRows] =
-                await pool.query(
-                    `
-                    SELECT
-                        COUNT(*)
-                            AS campaignParticipants
-                    FROM campaign_participants
-                    `
-                );
-
-            const [taskRows] =
-                await pool.query(
-                    `
-                    SELECT
-                        COUNT(*)
-                            AS tasksCompleted
-                    FROM user_tasks
-                    `
-                );
-
-            const [pointsRows] =
-                await pool.query(
-                    `
-                    SELECT
-                        COALESCE(
-                            SUM(t.points),
-                            0
-                        ) AS taskPoints
-                    FROM user_tasks ut
-                    INNER JOIN tasks t
-                        ON t.id = ut.task_id
-                    `
-                );
-
-            res.json({
-                success: true,
-
-                totalPlastic:
-                    Number(
-                        plasticRows[0]
-                            .totalPlastic || 0
-                    ),
-
-                volunteers:
-                    Number(
-                        volunteerRows[0]
-                            .volunteers || 0
-                    ),
-
-                campaignParticipants:
-                    Number(
-                        participantRows[0]
-                            .campaignParticipants || 0
-                    ),
-
-                tasksCompleted:
-                    Number(
-                        taskRows[0]
-                            .tasksCompleted || 0
-                    ),
-
-                taskPoints:
-                    Number(
-                        pointsRows[0]
-                            .taskPoints || 0
-                    )
-            });
-
-        } catch (error) {
-
-            console.error(
-                "Reports summary error:",
-                error
-            );
-
-            res.status(500).json({
-                success: false,
-                message:
-                    "Unable to load report summary"
-            });
-        }
-    }
-);
-
-/* =========================================================
-   MONTHLY REPORT
-========================================================= */
-
-app.get(
-    "/api/reports/monthly",
-    async (req, res) => {
-
-        try {
-
-            const month =
-                req.query.month;
-
-            if (
-                !month ||
-                !/^\d{4}-\d{2}$/.test(month)
-            ) {
-
-                return res.status(400).json({
-                    success: false,
-                    message:
-                        "Month must be in YYYY-MM format"
-                });
-            }
-
-            const startDate =
-                `${month}-01`;
-
-            const [plasticRows] =
-                await pool.query(
-                    `
-                    SELECT
-                        COALESCE(
-                            SUM(kilograms),
-                            0
-                        ) AS totalKg,
-                        COUNT(*) AS collections
-                    FROM plastic_collections
-                    WHERE collected_at >= ?
-                      AND collected_at <
-                          DATE_ADD(
-                              ?,
-                              INTERVAL 1 MONTH
-                          )
-                    `,
-                    [
-                        startDate,
-                        startDate
-                    ]
-                );
-
-            const [participantRows] =
-                await pool.query(
-                    `
-                    SELECT
-                        COUNT(*)
-                            AS campaignParticipants
-                    FROM campaign_participants cp
-                    INNER JOIN campaigns c
-                        ON c.id = cp.campaign_id
-                    WHERE c.campaign_date >= ?
-                      AND c.campaign_date <
-                          DATE_ADD(
-                              ?,
-                              INTERVAL 1 MONTH
-                          )
-                    `,
-                    [
-                        startDate,
-                        startDate
-                    ]
-                );
-
-            const [taskRows] =
-                await pool.query(
-                    `
-                    SELECT
-                        COUNT(*)
-                            AS tasksCompleted,
-                        COALESCE(
-                            SUM(t.points),
-                            0
-                        ) AS taskPoints
-                    FROM user_tasks ut
-                    INNER JOIN tasks t
-                        ON t.id = ut.task_id
-                    WHERE ut.completed_at >= ?
-                      AND ut.completed_at <
-                          DATE_ADD(
-                              ?,
-                              INTERVAL 1 MONTH
-                          )
-                    `,
-                    [
-                        startDate,
-                        startDate
-                    ]
-                );
-
-            const [typeRows] =
-                await pool.query(
-                    `
-                    SELECT
-                        plastic_type,
-                        COALESCE(
-                            SUM(kilograms),
-                            0
-                        ) AS kilograms
-                    FROM plastic_collections
-                    WHERE collected_at >= ?
-                      AND collected_at <
-                          DATE_ADD(
-                              ?,
-                              INTERVAL 1 MONTH
-                          )
-                    GROUP BY plastic_type
-                    ORDER BY kilograms DESC
-                    `,
-                    [
-                        startDate,
-                        startDate
-                    ]
-                );
-
-            const [volunteerRows] =
-                await pool.query(
-                    `
-                    SELECT
-                        COUNT(*) AS volunteers
-                    FROM users
-                    WHERE role = 'volunteer'
-                    `
-                );
-
-            res.json({
-                success: true,
-
-                month,
-
-                totalKg:
-                    Number(
-                        plasticRows[0]
-                            .totalKg || 0
-                    ),
-
-                collections:
-                    Number(
-                        plasticRows[0]
-                            .collections || 0
-                    ),
-
-                volunteers:
-                    Number(
-                        volunteerRows[0]
-                            .volunteers || 0
-                    ),
-
-                campaignParticipants:
-                    Number(
-                        participantRows[0]
-                            .campaignParticipants || 0
-                    ),
-
-                tasksCompleted:
-                    Number(
-                        taskRows[0]
-                            .tasksCompleted || 0
-                    ),
-
-                taskPoints:
-                    Number(
-                        taskRows[0]
-                            .taskPoints || 0
-                    ),
-
-                plasticTypes:
-                    typeRows.map(
-                        row => ({
-                            plastic_type:
-                                row.plastic_type,
-
-                            kilograms:
-                                Number(
-                                    row.kilograms || 0
-                                )
-                        })
-                    )
-            });
-
-        } catch (error) {
-
-            console.error(
-                "Monthly report error:",
-                error
-            );
-
-            res.status(500).json({
-                success: false,
-                message:
-                    "Unable to load monthly report"
-            });
-        }
-    }
-);
-
-/* =========================================================
-   API 404
-========================================================= */
-
-app.use(
-    "/api",
-    (req, res) => {
-
-        res.status(404).json({
+async function saveCollection(req, res, successMessage, invalidMessage) {
+    const { location, kilograms, plastic_type, collected_at } = req.body;
+    if (!location || kilograms === undefined || !plastic_type || !collected_at) {
+        return res.status(400).json({
             success: false,
-            message:
-                "API endpoint not found"
+            message: "All collection fields are required"
         });
     }
-);
+
+    const kg = Number(kilograms);
+    if (!Number.isFinite(kg) || kg <= 0) {
+        return res.status(400).json({
+            success: false,
+            message: invalidMessage
+        });
+    }
+
+    await collection("plastic_collections").insertOne({
+        id: await nextNumericId("plastic_collections"),
+        user_id: req.session.userId,
+        location,
+        kilograms: kg,
+        plastic_type,
+        collected_at: String(collected_at),
+        created_at: new Date()
+    });
+    return res.json({
+        success: true,
+        message: successMessage
+    });
+}
+
+app.post("/api/plastic-collections", requireLogin, async (req, res) => {
+    try {
+        await saveCollection(
+            req,
+            res,
+            "Plastic collection saved successfully",
+            "Kilograms must be greater than 0"
+        );
+    } catch (error) {
+        console.error("Plastic collection save error:", error);
+        res.status(500).json({
+            success: false,
+            message: "Unable to save plastic collection"
+        });
+    }
+});
+
+app.post("/api/collections", requireLogin, async (req, res) => {
+    try {
+        await saveCollection(
+            req,
+            res,
+            "Collection saved successfully",
+            "Invalid kilograms"
+        );
+    } catch (error) {
+        console.error("Collections compatibility error:", error);
+        res.status(500).json({
+            success: false,
+            message: "Unable to save collection"
+        });
+    }
+});
+
+app.get("/api/plastic-collections", requireLogin, async (req, res) => {
+    try {
+        const collections = await collection("plastic_collections")
+            .find(
+                { user_id: req.session.userId },
+                {
+                    projection: {
+                        _id: 0,
+                        id: 1,
+                        location: 1,
+                        kilograms: 1,
+                        plastic_type: 1,
+                        collected_at: 1,
+                        created_at: 1
+                    }
+                }
+            )
+            .sort({ collected_at: -1, id: -1 })
+            .toArray();
+        res.json({
+            success: true,
+            collections
+        });
+    } catch (error) {
+        console.error("Get collections error:", error);
+        res.status(500).json({
+            success: false,
+            message: "Unable to load collections"
+        });
+    }
+});
+
+app.delete("/api/plastic-collections/:id", requireLogin, async (req, res) => {
+    try {
+        const collectionId = Number(req.params.id);
+        const result = await collection("plastic_collections").deleteOne({
+            id: collectionId,
+            user_id: req.session.userId
+        });
+        if (result.deletedCount === 0) {
+            return res.status(404).json({
+                success: false,
+                message: "Collection not found"
+            });
+        }
+
+        res.json({
+            success: true,
+            message: "Collection deleted successfully"
+        });
+    } catch (error) {
+        console.error("Delete collection error:", error);
+        res.status(500).json({
+            success: false,
+            message: "Unable to delete collection"
+        });
+    }
+});
 
 /* =========================================================
-   GENERAL 404
+   REPORTS
 ========================================================= */
 
-app.use(
-    (req, res) => {
+app.get("/api/reports/summary", async (req, res) => {
+    try {
+        const [collections, volunteers, participants, completedTasks] =
+            await Promise.all([
+                collection("plastic_collections").find({}).toArray(),
+                collection("users").countDocuments({ role: "volunteer" }),
+                collection("campaign_participants").countDocuments({}),
+                collection("user_tasks").find({}).toArray()
+            ]);
+        const taskIds = completedTasks.map(task => task.task_id);
+        const tasks = await collection("tasks")
+            .find({ id: { $in: taskIds } }, { projection: { id: 1, points: 1 } })
+            .toArray();
+        const pointsById = new Map(tasks.map(task => [task.id, Number(task.points) || 0]));
 
-        res.status(404).send(
-            "Page not found"
-        );
+        res.json({
+            success: true,
+            totalPlastic: collections.reduce(
+                (total, item) => total + (Number(item.kilograms) || 0),
+                0
+            ),
+            volunteers,
+            campaignParticipants: participants,
+            tasksCompleted: completedTasks.length,
+            taskPoints: completedTasks.reduce(
+                (total, item) => total + (pointsById.get(item.task_id) || 0),
+                0
+            )
+        });
+    } catch (error) {
+        console.error("Reports summary error:", error);
+        res.status(500).json({
+            success: false,
+            message: "Unable to load report summary"
+        });
     }
-);
+});
+
+app.get("/api/reports/monthly", async (req, res) => {
+    try {
+        const month = req.query.month;
+        if (!month || !/^\d{4}-\d{2}$/.test(month)) {
+            return res.status(400).json({
+                success: false,
+                message: "Month must be in YYYY-MM format"
+            });
+        }
+
+        const bounds = monthBounds(month);
+        const monthlyCollections = await collection("plastic_collections")
+            .find({
+                collected_at: {
+                    $gte: bounds.start,
+                    $lt: bounds.end
+                }
+            })
+            .toArray();
+        const campaigns = await collection("campaigns")
+            .find({
+                campaign_date: {
+                    $gte: bounds.start,
+                    $lt: bounds.end
+                }
+            })
+            .toArray();
+        const campaignIds = campaigns.map(campaign => campaign.id);
+        const monthlyParticipants = await collection("campaign_participants")
+            .countDocuments({ campaign_id: { $in: campaignIds } });
+        const monthlyTasks = await collection("user_tasks")
+            .find({
+                completed_at: {
+                    $gte: bounds.startDate,
+                    $lt: bounds.endDate
+                }
+            })
+            .toArray();
+        const taskIds = monthlyTasks.map(task => task.task_id);
+        const tasks = await collection("tasks")
+            .find({ id: { $in: taskIds } }, { projection: { id: 1, points: 1 } })
+            .toArray();
+        const pointsById = new Map(tasks.map(task => [task.id, Number(task.points) || 0]));
+        const typeTotals = monthlyCollections.reduce((result, item) => {
+            result[item.plastic_type] =
+                (result[item.plastic_type] || 0) + (Number(item.kilograms) || 0);
+            return result;
+        }, {});
+
+        res.json({
+            success: true,
+            month,
+            totalKg: monthlyCollections.reduce(
+                (total, item) => total + (Number(item.kilograms) || 0),
+                0
+            ),
+            collections: monthlyCollections.length,
+            volunteers: await collection("users").countDocuments({
+                role: "volunteer"
+            }),
+            campaignParticipants: monthlyParticipants,
+            tasksCompleted: monthlyTasks.length,
+            taskPoints: monthlyTasks.reduce(
+                (total, item) => total + (pointsById.get(item.task_id) || 0),
+                0
+            ),
+            plasticTypes: Object.entries(typeTotals)
+                .map(([plastic_type, kilograms]) => ({
+                    plastic_type,
+                    kilograms
+                }))
+                .sort((a, b) => b.kilograms - a.kilograms)
+        });
+    } catch (error) {
+        console.error("Monthly report error:", error);
+        res.status(500).json({
+            success: false,
+            message: "Unable to load monthly report"
+        });
+    }
+});
+
+/* =========================================================
+   API 404 AND GENERAL 404
+========================================================= */
+
+app.use("/api", (req, res) => {
+    res.status(404).json({
+        success: false,
+        message: "API endpoint not found"
+    });
+});
+
+app.use((req, res) => {
+    res.status(404).send("Page not found");
+});
 
 /* =========================================================
    START SERVER
 ========================================================= */
 
 async function startServer() {
-
     try {
+        await mongoClient.connect();
+        database = mongoClient.db(databaseNameFromUri(MONGODB_URI));
 
-        const connection =
-            await pool.getConnection();
+        await Promise.all([
+            database.collection("users").createIndex({ email: 1 }, { unique: true }),
+            database.collection("user_tasks").createIndex(
+                { user_id: 1, task_id: 1 },
+                { unique: true }
+            ),
+            database.collection("campaign_participants").createIndex(
+                { campaign_id: 1, user_id: 1 },
+                { unique: true }
+            )
+        ]);
 
         console.log(
-            "✅ MySQL database connected"
+            `✅ MongoDB database connected (${database.databaseName})`
         );
-
-        connection.release();
-
-        app.listen(
-            PORT,
-            "0.0.0.0",
-            () => {
-
-                console.log(
-                    `🚀 PlasticLess server running on port ${PORT}`
-                );
-            }
-        );
-
+        app.listen(PORT, "0.0.0.0", () => {
+            console.log(`🚀 PlasticLess server running on port ${PORT}`);
+        });
     } catch (error) {
-
+        console.error("❌ MongoDB connection failed:");
+        console.error("URI:", MONGODB_URI ? "[configured]" : "NOT SET");
+        console.error("Database:", databaseNameFromUri(MONGODB_URI));
+        console.error("Error message:", error.message || "NO_MESSAGE");
         console.error(
-            "❌ MySQL connection failed:"
-        );
-
-        console.error(
-            "Host:",
-            process.env.DB_HOST ||
-                "NOT SET"
-        );
-
-        console.error(
-            "Port:",
-            process.env.DB_PORT ||
-                "NOT SET"
-        );
-
-        console.error(
-            "User:",
-            process.env.DB_USER ||
-                "NOT SET"
-        );
-
-        console.error(
-            "Database:",
-            process.env.DB_NAME ||
-                "NOT SET"
-        );
-
-        console.error(
-            "Error code:",
-            error.code ||
-                "NO_CODE"
-        );
-
-        console.error(
-            "Error message:",
-            error.message ||
-                "NO_MESSAGE"
-        );
-
-        console.error(
-            "Error name:",
-            error.name ||
-                "NO_NAME"
-        );
-
-        console.log(
-            "⚠️ Server will not start until MySQL is available."
+            "⚠️ Server will not start until MongoDB is available."
         );
     }
 }
